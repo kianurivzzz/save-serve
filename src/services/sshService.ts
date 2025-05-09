@@ -1,0 +1,341 @@
+import * as crypto from 'crypto';
+import * as fs from 'fs';
+import * as os from 'os';
+import * as path from 'path';
+import * as vscode from 'vscode';
+import { Server } from '../models/serverModel';
+
+export class SshService {
+    public async connectToServer(server: Server): Promise<void> {
+        try {
+            console.log('Подключение к серверу:', JSON.stringify(server, null, 2));
+
+            // Проверяет, что все поля имеют значения
+            if (!server || !server.host || !server.username) {
+                throw new Error('Не указаны обязательные параметры подключения. Хост или имя пользователя');
+            }
+
+            // Создает терминал для подключения
+            const terminal = vscode.window.createTerminal(`SSH: ${server.name}`);
+            terminal.show();
+
+            // Если используется пароль, подключается через скрипт автоматизации
+            if (!server.usePrivateKey && server.password) {
+                await this.connectWithPassword(terminal, server);
+            }
+            // Если используется ключ, подключается обычным способом
+            else {
+                await this.connectWithKey(terminal, server);
+            }
+
+        } catch (error) {
+            console.error('Ошибка при подключении к серверу:', error);
+            vscode.window.showErrorMessage(`Ошибка при подключении к серверу: ${error instanceof Error ? error.message : String(error)}`);
+        }
+    }
+
+    /**
+     * Подключение с использованием пароля
+     */
+    private async connectWithPassword(terminal: vscode.Terminal, server: Server): Promise<void> {
+        const host = server.host;
+        const port = server.port || 22;
+        const username = server.username;
+        const password = server.password || '';
+
+        // Информирует пользователя без лишних подробностей
+        terminal.sendText(`echo "Подключение к ${server.name}..."`);
+
+        // Определяет платформу для правильного выбора метода автоматизации
+        const platform = os.platform();
+
+        // На macOS и Linux можно использовать "expect" через AppleScript или "script"
+        if (platform === 'darwin') {
+            // На macOS используем AppleScript для надёжного ввода пароля
+            await this.connectWithMacOSMethod(terminal, server);
+        }
+        else if (platform === 'linux') {
+            // На Linux пробует использовать sshpass если установлен
+            await this.connectWithLinuxMethod(terminal, server);
+        }
+        else if (platform === 'win32') {
+            // На Windows используется PowerShell
+            await this.connectWithWindowsMethod(terminal, server);
+        }
+        else {
+            // Для неизвестных платформ просто показывается пароль
+            terminal.sendText(`echo "Пароль для SSH: ${password}"`);
+
+            // Формирует SSH команду
+            let sshCommand = 'ssh';
+            if (port !== 22) { sshCommand += ` -p ${port}`; }
+            sshCommand += ` -o StrictHostKeyChecking=no ${username}@${host}`;
+
+            terminal.sendText(sshCommand);
+        }
+    }
+
+    /**
+     * Метод подключения для macOS
+     */
+    private async connectWithMacOSMethod(terminal: vscode.Terminal, server: Server): Promise<void> {
+        const host = server.host;
+        const port = server.port || 22;
+        const username = server.username;
+        const password = server.password || '';
+
+        // Создаёт уникальные имена файлов
+        const sessionId = crypto.randomBytes(8).toString('hex');
+        const tmpDir = os.tmpdir();
+        const expectScriptPath = path.join(tmpDir, `ss_expect_${sessionId}`);
+
+        // Содержимое expect скрипта (улучшенная версия)
+        const expectScript = `#!/usr/bin/expect -f
+# Устанавливаем таймаут ожидания (увеличиваем для медленных соединений)
+set timeout 60
+
+# Запускаем SSH подключение
+spawn ssh ${port !== 22 ? `-p ${port} ` : ''}-o StrictHostKeyChecking=no ${username}@${host}
+# Отладочное сообщение
+send_user "\\nОжидание приглашения для ввода пароля...\\n"
+
+# Ожидаем запрос на ввод пароля или других возможных запросов
+expect {
+    # Обрабатываем запрос на проверку подлинности сервера
+    "yes/no" {
+        send "yes\\r"
+        send_user "\\nОтправлено подтверждение подлинности\\n"
+        exp_continue
+    }
+    # Обрабатываем запрос на ввод пароля (разные варианты запроса)
+    -re "assword:" {
+        send "${password}\\r"
+        send_user "\\nПароль отправлен\\n"
+    }
+    # Таймаут - показываем сообщение
+    timeout {
+        send_user "\\nТаймаут ожидания запроса пароля\\n"
+    }
+    # Ошибка - показываем сообщение
+    eof {
+        send_user "\\nПодключение прервано неожиданно\\n"
+    }
+}
+
+# Переходим в интерактивный режим
+interact`;
+
+        try {
+            // Записывает expect скрипт и устанавливает права на выполнение
+            await fs.promises.writeFile(expectScriptPath, expectScript, { mode: 0o755 });
+
+            // Проверяем, что файл был создан с нужными правами
+            const fileStats = await fs.promises.stat(expectScriptPath);
+            console.log(`Expect скрипт создан: ${expectScriptPath}, права: ${fileStats.mode.toString(8)}`);
+
+            // Проверяем наличие expect корректно
+            terminal.sendText(`echo "Проверка наличия expect..."`);
+            terminal.sendText(`if command -v expect >/dev/null 2>&1; then`);
+
+            // Если expect установлен, запускаем скрипт
+            terminal.sendText(`  echo "Expect найден, запускаем скрипт автоматизации..."`);
+            terminal.sendText(`  chmod +x "${expectScriptPath}" && "${expectScriptPath}"`);
+            terminal.sendText(`else`);
+
+            // Запасной вариант - показываем пароль и используем обычный SSH
+            terminal.sendText(`  echo "Expect не найден, используем стандартный SSH."`);
+            terminal.sendText(`  echo "Пароль для SSH: ${password}"`);
+            terminal.sendText(`  ssh ${port !== 22 ? `-p ${port} ` : ''}-o StrictHostKeyChecking=no ${username}@${host}`);
+            terminal.sendText(`fi`);
+
+            // Удаляет временный файл через некоторое время
+            setTimeout(() => {
+                try {
+                    fs.unlinkSync(expectScriptPath);
+                    console.log(`Временный expect скрипт удален: ${expectScriptPath}`);
+                } catch (error) {
+                    console.log('Ошибка при удалении временного файла:', error);
+                }
+            }, 10000); // Увеличиваем время до удаления
+
+        } catch (error) {
+            console.error('Ошибка при создании expect скрипта:', error);
+
+            // Показываем пароль и используем обычный SSH
+            terminal.sendText(`echo "Ошибка при создании скрипта автоматизации: ${error instanceof Error ? error.message : String(error)}"`);
+            terminal.sendText(`echo "Пароль для SSH: ${password}"`);
+            terminal.sendText(`ssh ${port !== 22 ? `-p ${port} ` : ''}-o StrictHostKeyChecking=no ${username}@${host}`);
+        }
+    }
+
+    /**
+     * Метод подключения для Linux
+     */
+    private async connectWithLinuxMethod(terminal: vscode.Terminal, server: Server): Promise<void> {
+        const host = server.host;
+        const port = server.port || 22;
+        const username = server.username;
+        const password = server.password || '';
+
+        // Проверяем наличие sshpass без вывода в терминал
+        terminal.sendText(`if command -v sshpass >/dev/null 2>&1; then`);
+        // Используем sshpass, если доступен
+        terminal.sendText(`  sshpass -p "${password}" ssh ${port !== 22 ? `-p ${port} ` : ''}-o StrictHostKeyChecking=no ${username}@${host}`);
+        terminal.sendText(`else`);
+
+        // Проверяем наличие expect без вывода в терминал
+        terminal.sendText(`  if command -v expect >/dev/null 2>&1; then`);
+
+        // Создаем сессионный ID для временных файлов
+        const sessionId = crypto.randomBytes(8).toString('hex');
+        const tmpDir = os.tmpdir();
+        const expectScriptPath = path.join(tmpDir, `ss_expect_${sessionId}`);
+
+        // Содержимое expect скрипта
+        const expectScript = `#!/usr/bin/expect -f
+set timeout 30
+spawn ssh ${port !== 22 ? `-p ${port} ` : ''}-o StrictHostKeyChecking=no ${username}@${host}
+expect {
+    "yes/no" { send "yes\\r"; exp_continue }
+    "password" { send "${password}\\r" }
+}
+interact
+`;
+
+        try {
+            // Записывает expect скрипт
+            await fs.promises.writeFile(expectScriptPath, expectScript, { mode: 0o700 });
+
+            // Запускает expect скрипт
+            terminal.sendText(`    "${expectScriptPath}" >/dev/null 2>&1 || "${expectScriptPath}"`);
+
+            // Удаляет временный файл через некоторое время
+            setTimeout(() => {
+                try {
+                    fs.unlinkSync(expectScriptPath);
+                } catch (error) {
+                    console.log('Ошибка при удалении временного файла:', error);
+                }
+            }, 5000);
+
+        } catch (error) {
+            console.error('Ошибка при создании expect скрипта:', error);
+
+            // Запускает обычный SSH и показывает пароль
+            terminal.sendText(`    echo "Пароль для SSH: ${password}"`);
+            terminal.sendText(`    ssh ${port !== 22 ? `-p ${port} ` : ''}-o StrictHostKeyChecking=no ${username}@${host}`);
+        }
+
+        // Если нет expect, используем обычный SSH
+        terminal.sendText(`  else`);
+        terminal.sendText(`    echo "Пароль для SSH: ${password}"`);
+        terminal.sendText(`    ssh ${port !== 22 ? `-p ${port} ` : ''}-o StrictHostKeyChecking=no ${username}@${host}`);
+        terminal.sendText(`  fi`);
+        terminal.sendText(`fi`);
+    }
+
+    /**
+     * Метод подключения для Windows
+     */
+    private async connectWithWindowsMethod(terminal: vscode.Terminal, server: Server): Promise<void> {
+        const host = server.host;
+        const port = server.port || 22;
+        const username = server.username;
+        const password = server.password || '';
+
+        // Создаёт уникальные имена файлов
+        const sessionId = crypto.randomBytes(8).toString('hex');
+        const tmpDir = os.tmpdir();
+        const psScriptPath = path.join(tmpDir, `ss_ps_${sessionId}.ps1`);
+
+        // Создаёт PowerShell скрипт для автоматизации SSH
+        const psScriptContent = `
+# PowerShell скрипт для автоматизации SSH входа
+$password = '${password.replace(/'/g, "''")}'
+
+$sshCommand = "ssh"
+${port !== 22 ? '$sshCommand += " -p ' + port + '"' : ''}
+$sshCommand += " -o StrictHostKeyChecking=no ${username}@${host}"
+
+$psi = New-Object System.Diagnostics.ProcessStartInfo
+$psi.FileName = "ssh"
+$psi.Arguments = "${port !== 22 ? `-p ${port} ` : ''}-o StrictHostKeyChecking=no ${username}@${host}"
+$psi.UseShellExecute = $false
+$psi.RedirectStandardInput = $true
+$psi.RedirectStandardOutput = $true
+$psi.RedirectStandardError = $true
+
+Write-Host "Подключение к ${username}@${host}..."
+
+$process = New-Object System.Diagnostics.Process
+$process.StartInfo = $psi
+$process.Start() | Out-Null
+
+Start-Sleep -Seconds 1
+$process.StandardInput.WriteLine($password)
+
+# Выводим результат
+$outputReader = $process.StandardOutput.ReadToEndAsync()
+$errorReader = $process.StandardError.ReadToEndAsync()
+
+$process.WaitForExit()
+Write-Host $outputReader.Result
+Write-Host $errorReader.Result -ForegroundColor Red
+
+# Удаляем этот скрипт
+Remove-Item -Path $MyInvocation.MyCommand.Path -Force
+`;
+
+        try {
+            // Записывает PowerShell скрипт
+            await fs.promises.writeFile(psScriptPath, psScriptContent);
+
+            // Запускает PowerShell скрипт
+            terminal.sendText(`powershell -ExecutionPolicy Bypass -File "${psScriptPath}"`);
+
+        } catch (error) {
+            console.error('Ошибка при создании PowerShell скрипта:', error);
+
+            // Запускает обычный SSH и показывает пароль
+            terminal.sendText(`echo "Ошибка при создании скрипта. Используем обычный SSH."`);
+            terminal.sendText(`echo "Пароль: ${password}"`);
+            terminal.sendText(`ssh ${port !== 22 ? `-p ${port} ` : ''}-o StrictHostKeyChecking=no ${username}@${host}`);
+        }
+    }
+
+    /**
+     * Экранирует строку для использования в AppleScript
+     */
+    private escapeAppleScriptString(str: string): string {
+        return str.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+    }
+
+    /**
+     * Подключение с помощью SSH-ключа
+     */
+    private async connectWithKey(terminal: vscode.Terminal, server: Server): Promise<void> {
+        // Формирует команду для подключения к серверу
+        let sshCommand = `ssh`;
+
+        // Добавляет порт, если он не стандартный (22)
+        const port = server.port || 22;
+        if (port !== 22) {
+            sshCommand += ` -p ${port}`;
+        }
+
+        // Добавляет путь к приватному ключу, если он используется
+        if (server.usePrivateKey && server.privateKeyPath) {
+            sshCommand += ` -i "${server.privateKeyPath}"`;
+        }
+
+        // Добавляет имя пользователя и хост
+        sshCommand += ` ${server.username}@${server.host}`;
+
+        // Если есть пароль для ключа, показывает его
+        if (server.usePrivateKey && server.privateKeyPassword) {
+            terminal.sendText(`echo "Пароль для SSH-ключа: ${server.privateKeyPassword}"`);
+        }
+
+        terminal.sendText(sshCommand);
+    }
+}

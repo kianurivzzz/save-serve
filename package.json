@@ -1,0 +1,144 @@
+{
+  "name": "save-serve",
+  "displayName": "Save Serve",
+  "description": "Save accesses to your servers in a couple mouse clicks, then quickly connect to them. Right in your favorite code editor. Easy and secure. Use Save Serve for free!",
+  "version": "0.0.1",
+  "publisher": "Nikita Karasyov",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./dist/extension.js",
+  "l10n": "./l10n",
+  "contributes": {
+    "commands": [
+      {
+        "command": "save-serve.addServer",
+        "title": "%command.addServer%",
+        "icon": "$(add)"
+      },
+      {
+        "command": "save-serve.editServer",
+        "title": "%command.editServer%",
+        "icon": "$(edit)"
+      },
+      {
+        "command": "save-serve.deleteServer",
+        "title": "%command.deleteServer%",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "save-serve.connectToServer",
+        "title": "%command.connectToServer%",
+        "icon": "$(terminal)"
+      },
+      {
+        "command": "save-serve.refreshServers",
+        "title": "%command.refreshServers%",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "save-serve.changeLanguage",
+        "title": "%command.changeLanguage%",
+        "icon": "$(globe)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "save-serve.addServer",
+          "when": "view == saveServeServers",
+          "group": "navigation"
+        },
+        {
+          "command": "save-serve.refreshServers",
+          "when": "view == saveServeServers",
+          "group": "navigation"
+        },
+        {
+          "command": "save-serve.changeLanguage",
+          "when": "view == saveServeServers",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "save-serve.connectToServer",
+          "when": "view == saveServeServers && viewItem == server",
+          "group": "inline"
+        },
+        {
+          "command": "save-serve.editServer",
+          "when": "view == saveServeServers && viewItem == server",
+          "group": "inline"
+        },
+        {
+          "command": "save-serve.deleteServer",
+          "when": "view == saveServeServers && viewItem == server",
+          "group": "inline"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "save-serve",
+          "title": "Save Serve",
+          "icon": "$(server)"
+        }
+      ]
+    },
+    "views": {
+      "save-serve": [
+        {
+          "id": "saveServeServers",
+          "name": "%view.servers%"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Save Serve",
+      "properties": {
+        "save-serve.language": {
+          "type": "string",
+          "enum": ["ru", "en"],
+          "enumDescriptions": [
+            "Russian",
+            "English"
+          ],
+          "default": "ru",
+          "description": "Language used in the extension"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "webpack && npm run copy-l10n",
+    "watch": "webpack --watch",
+    "package": "webpack --mode production --devtool hidden-source-map && npm run copy-l10n",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "npm run compile-tests && npm run compile && npm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test",
+    "copy-l10n": "mkdir -p ./dist/l10n && cp ./l10n/*.json ./dist/l10n/"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.80.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "20.x",
+    "@typescript-eslint/eslint-plugin": "^8.31.1",
+    "@typescript-eslint/parser": "^8.31.1",
+    "eslint": "^9.25.1",
+    "typescript": "^5.8.3",
+    "ts-loader": "^9.5.2",
+    "webpack": "^5.99.7",
+    "webpack-cli": "^6.0.1",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.5.2"
+  }
+}

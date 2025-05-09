@@ -1,0 +1,9 @@
+{
+    "command.addServer": "Добавить сервер",
+    "command.editServer": "Редактировать сервер",
+    "command.deleteServer": "Удалить сервер",
+    "command.connectToServer": "Подключиться к серверу",
+    "command.refreshServers": "Обновить список серверов",
+    "command.changeLanguage": "Сменить язык",
+    "view.servers": "Серверы"
+}

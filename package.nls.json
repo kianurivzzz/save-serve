@@ -1,0 +1,9 @@
+{
+    "command.addServer": "Add Server",
+    "command.editServer": "Edit Server",
+    "command.deleteServer": "Delete Server",
+    "command.connectToServer": "Connect to Server",
+    "command.refreshServers": "Refresh Server List",
+    "command.changeLanguage": "Change Language",
+    "view.servers": "Servers"
+}
