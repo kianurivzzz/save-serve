@@ -3,13 +3,26 @@
   "displayName": "Save Serve",
   "description": "Save accesses to your servers in a couple mouse clicks, then quickly connect to them. Right in your favorite code editor. Easy and secure. Use Save Serve for free!",
   "version": "0.0.1",
-  "publisher": "Nikita Karasyov",
+  "publisher": "nkarasyov",
   "engines": {
     "vscode": "^1.80.0"
   },
   "categories": [
     "Other"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kianurivzzz/save-serve.git"
+  },
+  "license": "MIT",
+  "keywords": [
+    "ssh",
+    "server",
+    "terminal",
+    "remote",
+    "connection"
+  ],
+  "icon": "images/icon.png",
   "activationEvents": [],
   "main": "./dist/extension.js",
   "l10n": "./l10n",
