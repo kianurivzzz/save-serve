@@ -2,7 +2,7 @@
   "name": "save-serve",
   "displayName": "Save Serve",
   "description": "Save accesses to your servers in a couple mouse clicks, then quickly connect to them. Right in your favorite code editor. Easy and secure. Use Save Serve for free!",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "publisher": "nkarasyov",
   "engines": {
     "vscode": "^1.80.0"
@@ -117,7 +117,10 @@
       "properties": {
         "save-serve.language": {
           "type": "string",
-          "enum": ["ru", "en"],
+          "enum": [
+            "ru",
+            "en"
+          ],
           "enumDescriptions": [
             "Russian",
             "English"
@@ -141,17 +144,17 @@
     "copy-l10n": "mkdir -p ./dist/l10n && cp ./l10n/*.json ./dist/l10n/"
   },
   "devDependencies": {
-    "@types/vscode": "^1.80.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "20.x",
+    "@types/vscode": "^1.80.0",
     "@typescript-eslint/eslint-plugin": "^8.31.1",
     "@typescript-eslint/parser": "^8.31.1",
-    "eslint": "^9.25.1",
-    "typescript": "^5.8.3",
-    "ts-loader": "^9.5.2",
-    "webpack": "^5.99.7",
-    "webpack-cli": "^6.0.1",
     "@vscode/test-cli": "^0.0.10",
-    "@vscode/test-electron": "^2.5.2"
+    "@vscode/test-electron": "^2.5.2",
+    "eslint": "^9.25.1",
+    "ts-loader": "^9.5.2",
+    "typescript": "^5.8.3",
+    "webpack": "^5.99.8",
+    "webpack-cli": "^6.0.1"
   }
 }

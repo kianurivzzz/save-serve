@@ -105,7 +105,16 @@ expect {
         exp_continue
     }
     # Обрабатываем запрос на ввод пароля (разные варианты запроса)
-    -re "([Pp]assword:|[Пп]ароль:)" {
+    "password:" {
+        send "${password}\\r"
+    }
+    "Password:" {
+        send "${password}\\r"
+    }
+    "пароль:" {
+        send "${password}\\r"
+    }
+    "Пароль:" {
         send "${password}\\r"
     }
     # Таймаут - завершаем с ошибкой
@@ -183,7 +192,10 @@ set timeout 30
 spawn ssh ${port !== 22 ? `-p ${port} ` : ''}-o StrictHostKeyChecking=no ${username}@${host}
 expect {
     "yes/no" { send "yes\\r"; exp_continue }
-    -re "([Pp]assword:|[Пп]ароль:)" { send "${password}\\r" }
+    "password:" { send "${password}\\r" }
+    "Password:" { send "${password}\\r" }
+    "пароль:" { send "${password}\\r" }
+    "Пароль:" { send "${password}\\r" }
 }
 interact
 `;
@@ -307,11 +319,50 @@ Remove-Item -Path $MyInvocation.MyCommand.Path -Force
         // Добавляет имя пользователя и хост
         sshCommand += ` ${server.username}@${server.host}`;
 
-        // Если есть пароль для ключа, показывает его
+        // Если есть пароль для ключа, скрываем его от вывода
         if (server.usePrivateKey && server.privateKeyPassword) {
-            terminal.sendText(`echo "Пароль для SSH-ключа: ${server.privateKeyPassword}"`);
-        }
+            // Создаём expect скрипт для работы с защищенным ключом
+            const sessionId = crypto.randomBytes(8).toString('hex');
+            const tmpDir = os.tmpdir();
+            const expectScriptPath = path.join(tmpDir, `ss_key_${sessionId}`);
 
-        terminal.sendText(sshCommand);
+            const keyExpectScript = `#!/usr/bin/expect -f
+set timeout 30
+spawn ssh ${port !== 22 ? `-p ${port} ` : ''}-i "${server.privateKeyPath}" -o StrictHostKeyChecking=no ${server.username}@${server.host}
+expect {
+    "yes/no" { send "yes\\r"; exp_continue }
+    "passphrase" { send "${server.privateKeyPassword}\\r" }
+    "Enter passphrase" { send "${server.privateKeyPassword}\\r" }
+    "Введите парольную фразу" { send "${server.privateKeyPassword}\\r" }
+}
+interact
+`;
+
+            try {
+                // Записывает expect скрипт
+                await fs.promises.writeFile(expectScriptPath, keyExpectScript, { mode: 0o700 });
+
+                // Проверяем наличие expect
+                terminal.sendText(`if command -v expect >/dev/null 2>&1; then`);
+                terminal.sendText(`  chmod +x "${expectScriptPath}" && "${expectScriptPath}"`);
+                terminal.sendText(`else`);
+                terminal.sendText(`  ${sshCommand}`);
+                terminal.sendText(`fi`);
+
+                // Удаляет временный файл через некоторое время
+                setTimeout(() => {
+                    try {
+                        fs.unlinkSync(expectScriptPath);
+                    } catch (error) {
+                        console.log('Ошибка при удалении временного файла:', error);
+                    }
+                }, 5000);
+            } catch (error) {
+                console.error('Ошибка при создании expect скрипта для ключа:', error);
+                terminal.sendText(sshCommand);
+            }
+        } else {
+            terminal.sendText(sshCommand);
+        }
     }
 }
