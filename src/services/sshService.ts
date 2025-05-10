@@ -96,29 +96,25 @@ set timeout 60
 
 # Запускаем SSH подключение
 spawn ssh ${port !== 22 ? `-p ${port} ` : ''}-o StrictHostKeyChecking=no ${username}@${host}
-# Отладочное сообщение
-send_user "\\nОжидание приглашения для ввода пароля...\\n"
 
 # Ожидаем запрос на ввод пароля или других возможных запросов
 expect {
     # Обрабатываем запрос на проверку подлинности сервера
     "yes/no" {
         send "yes\\r"
-        send_user "\\nОтправлено подтверждение подлинности\\n"
         exp_continue
     }
     # Обрабатываем запрос на ввод пароля (разные варианты запроса)
-    -re "assword:" {
+    -re "([Pp]assword:|[Пп]ароль:)" {
         send "${password}\\r"
-        send_user "\\nПароль отправлен\\n"
     }
-    # Таймаут - показываем сообщение
+    # Таймаут - завершаем с ошибкой
     timeout {
-        send_user "\\nТаймаут ожидания запроса пароля\\n"
+        exit 1
     }
-    # Ошибка - показываем сообщение
+    # Ошибка - завершаем с ошибкой
     eof {
-        send_user "\\nПодключение прервано неожиданно\\n"
+        exit 1
     }
 }
 
@@ -129,22 +125,14 @@ interact`;
             // Записывает expect скрипт и устанавливает права на выполнение
             await fs.promises.writeFile(expectScriptPath, expectScript, { mode: 0o755 });
 
-            // Проверяем, что файл был создан с нужными правами
-            const fileStats = await fs.promises.stat(expectScriptPath);
-            console.log(`Expect скрипт создан: ${expectScriptPath}, права: ${fileStats.mode.toString(8)}`);
-
             // Проверяем наличие expect корректно
-            terminal.sendText(`echo "Проверка наличия expect..."`);
             terminal.sendText(`if command -v expect >/dev/null 2>&1; then`);
 
             // Если expect установлен, запускаем скрипт
-            terminal.sendText(`  echo "Expect найден, запускаем скрипт автоматизации..."`);
             terminal.sendText(`  chmod +x "${expectScriptPath}" && "${expectScriptPath}"`);
             terminal.sendText(`else`);
 
-            // Запасной вариант - показываем пароль и используем обычный SSH
-            terminal.sendText(`  echo "Expect не найден, используем стандартный SSH."`);
-            terminal.sendText(`  echo "Пароль для SSH: ${password}"`);
+            // Запасной вариант - используем обычный SSH
             terminal.sendText(`  ssh ${port !== 22 ? `-p ${port} ` : ''}-o StrictHostKeyChecking=no ${username}@${host}`);
             terminal.sendText(`fi`);
 
@@ -161,9 +149,7 @@ interact`;
         } catch (error) {
             console.error('Ошибка при создании expect скрипта:', error);
 
-            // Показываем пароль и используем обычный SSH
-            terminal.sendText(`echo "Ошибка при создании скрипта автоматизации: ${error instanceof Error ? error.message : String(error)}"`);
-            terminal.sendText(`echo "Пароль для SSH: ${password}"`);
+            // Используем обычный SSH без показа пароля
             terminal.sendText(`ssh ${port !== 22 ? `-p ${port} ` : ''}-o StrictHostKeyChecking=no ${username}@${host}`);
         }
     }
@@ -197,7 +183,7 @@ set timeout 30
 spawn ssh ${port !== 22 ? `-p ${port} ` : ''}-o StrictHostKeyChecking=no ${username}@${host}
 expect {
     "yes/no" { send "yes\\r"; exp_continue }
-    "password" { send "${password}\\r" }
+    -re "([Pp]assword:|[Пп]ароль:)" { send "${password}\\r" }
 }
 interact
 `;
@@ -207,7 +193,7 @@ interact
             await fs.promises.writeFile(expectScriptPath, expectScript, { mode: 0o700 });
 
             // Запускает expect скрипт
-            terminal.sendText(`    "${expectScriptPath}" >/dev/null 2>&1 || "${expectScriptPath}"`);
+            terminal.sendText(`    "${expectScriptPath}"`);
 
             // Удаляет временный файл через некоторое время
             setTimeout(() => {
@@ -221,14 +207,12 @@ interact
         } catch (error) {
             console.error('Ошибка при создании expect скрипта:', error);
 
-            // Запускает обычный SSH и показывает пароль
-            terminal.sendText(`    echo "Пароль для SSH: ${password}"`);
+            // Запускает обычный SSH без показа пароля
             terminal.sendText(`    ssh ${port !== 22 ? `-p ${port} ` : ''}-o StrictHostKeyChecking=no ${username}@${host}`);
         }
 
         // Если нет expect, используем обычный SSH
         terminal.sendText(`  else`);
-        terminal.sendText(`    echo "Пароль для SSH: ${password}"`);
         terminal.sendText(`    ssh ${port !== 22 ? `-p ${port} ` : ''}-o StrictHostKeyChecking=no ${username}@${host}`);
         terminal.sendText(`  fi`);
         terminal.sendText(`fi`);
@@ -253,10 +237,6 @@ interact
 # PowerShell скрипт для автоматизации SSH входа
 $password = '${password.replace(/'/g, "''")}'
 
-$sshCommand = "ssh"
-${port !== 22 ? '$sshCommand += " -p ' + port + '"' : ''}
-$sshCommand += " -o StrictHostKeyChecking=no ${username}@${host}"
-
 $psi = New-Object System.Diagnostics.ProcessStartInfo
 $psi.FileName = "ssh"
 $psi.Arguments = "${port !== 22 ? `-p ${port} ` : ''}-o StrictHostKeyChecking=no ${username}@${host}"
@@ -264,8 +244,6 @@ $psi.UseShellExecute = $false
 $psi.RedirectStandardInput = $true
 $psi.RedirectStandardOutput = $true
 $psi.RedirectStandardError = $true
-
-Write-Host "Подключение к ${username}@${host}..."
 
 $process = New-Object System.Diagnostics.Process
 $process.StartInfo = $psi
@@ -296,9 +274,7 @@ Remove-Item -Path $MyInvocation.MyCommand.Path -Force
         } catch (error) {
             console.error('Ошибка при создании PowerShell скрипта:', error);
 
-            // Запускает обычный SSH и показывает пароль
-            terminal.sendText(`echo "Ошибка при создании скрипта. Используем обычный SSH."`);
-            terminal.sendText(`echo "Пароль: ${password}"`);
+            // Запускает обычный SSH без показа пароля
             terminal.sendText(`ssh ${port !== 22 ? `-p ${port} ` : ''}-o StrictHostKeyChecking=no ${username}@${host}`);
         }
     }
