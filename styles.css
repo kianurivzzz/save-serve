@@ -271,6 +271,16 @@ nav a {
 	border: 1px solid var(--vscode-border);
 }
 
+.demo-video {
+	width: 100%;
+	border-radius: var(--border-radius-md);
+	box-shadow: var(--shadow-md);
+	border: 1px solid var(--vscode-border);
+	background-color: var(--vscode-bg-lighter);
+	max-height: 400px;
+	object-fit: contain;
+}
+
 /* Возможности */
 .features-grid {
 	display: grid;
