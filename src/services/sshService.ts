@@ -311,9 +311,18 @@ Remove-Item -Path $MyInvocation.MyCommand.Path -Force
             sshCommand += ` -p ${port}`;
         }
 
+        // Проверяем путь к ключу и корректируем его при необходимости
+        let keyPath = server.privateKeyPath || '';
+
+        // Если путь указывает на .pub файл, убираем расширение .pub
+        if (keyPath.endsWith('.pub')) {
+            keyPath = keyPath.substring(0, keyPath.length - 4);
+            console.log(`Исправлен путь к ключу: ${keyPath}`);
+        }
+
         // Добавляет путь к приватному ключу, если он используется
-        if (server.usePrivateKey && server.privateKeyPath) {
-            sshCommand += ` -i "${server.privateKeyPath}"`;
+        if (server.usePrivateKey && keyPath) {
+            sshCommand += ` -i "${keyPath}"`;
         }
 
         // Добавляет имя пользователя и хост
@@ -328,7 +337,7 @@ Remove-Item -Path $MyInvocation.MyCommand.Path -Force
 
             const keyExpectScript = `#!/usr/bin/expect -f
 set timeout 30
-spawn ssh ${port !== 22 ? `-p ${port} ` : ''}-i "${server.privateKeyPath}" -o StrictHostKeyChecking=no ${server.username}@${server.host}
+spawn ssh ${port !== 22 ? `-p ${port} ` : ''}-i "${keyPath}" -o StrictHostKeyChecking=no ${server.username}@${server.host}
 expect {
     "yes/no" { send "yes\\r"; exp_continue }
     "passphrase" { send "${server.privateKeyPassword}\\r" }

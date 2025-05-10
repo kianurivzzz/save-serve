@@ -4,7 +4,7 @@
 
 Save Serve is a Visual Studio Code extension that allows you to save server data and instantly connect to them via SSH without leaving your code editor.
 
-![Version](https://img.shields.io/badge/version-0.0.5-blue)
+![Version](https://img.shields.io/badge/version-0.0.6-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
 ## ✨ Features
@@ -81,7 +81,7 @@ Found a bug or have a suggestion for improvement? Create an [issue](https://gith
 
 Save Serve — это расширение для Visual Studio Code, которое позволяет сохранять данные серверов и мгновенно подключаться к ним через SSH, не выходя из редактора кода.
 
-![Версия](https://img.shields.io/badge/version-0.0.5-blue)
+![Версия](https://img.shields.io/badge/version-0.0.6-blue)
 ![Лицензия](https://img.shields.io/badge/license-MIT-green)
 
 ## ✨ Возможности
