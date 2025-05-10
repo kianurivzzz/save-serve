@@ -40,7 +40,7 @@
 					<p>Save Serve — расширение для VS Code, которое позволяет сохранять данные серверов и мгновенно
 						подключаться к ним через SSH, не выходя из редактора кода.</p>
 					<div class="badge-container">
-						<span class="badge">Версия 0.0.2</span>
+						<span class="badge">Версия 0.0.3</span>
 						<span class="badge">Лицензия MIT</span>
 					</div>
 					<a href="https://marketplace.visualstudio.com/items?itemName=nkarasyov.save-serve" target="_blank"
@@ -48,7 +48,10 @@
 					<a href="https://github.com/kianurivzzz/save-serve" target="_blank" class="github-btn">GitHub</a>
 				</div>
 				<div class="hero-image">
-					<img src="img/screenshot.png" alt="Save Serve в действии">
+					<video controls autoplay loop muted class="demo-video">
+						<source src="img/howwork.mov" type="video/mp4">
+						Ваш браузер не поддерживает видео тег.
+					</video>
 				</div>
 			</div>
 		</div>
@@ -88,19 +91,19 @@
 			<div class="installation-steps">
 				<div class="step">
 					<div class="step-number">1</div>
-					<p>Откройте Visual Studio Code</p>
+					<p>Открой Visual Studio Code</p>
 				</div>
 				<div class="step">
 					<div class="step-number">2</div>
-					<p>Нажмите <code>Ctrl+P</code> или <code>Cmd+P</code> на macOS</p>
+					<p>Нажми <code>Ctrl+P</code> или <code>Cmd+P</code> на macOS</p>
 				</div>
 				<div class="step">
 					<div class="step-number">3</div>
-					<p>Введите <code>ext install save-serve</code></p>
+					<p>Введи <code>ext install save-serve</code></p>
 				</div>
 				<div class="step">
 					<div class="step-number">4</div>
-					<p>Нажмите Enter</p>
+					<p>Нажми Enter</p>
 				</div>
 			</div>
 			<div class="code-block">
@@ -114,7 +117,7 @@
 					<pre><code>ext install save-serve</code></pre>
 				</div>
 			</div>
-			<p class="or-text">Или просто найдите "Save Serve" в маркетплейсе VS Code</p>
+			<p class="or-text">Или просто найди "Save Serve" в маркетплейсе VS Code</p>
 		</div>
 	</section>
 
@@ -130,9 +133,9 @@
 					<div class="tab-pane active" id="add-server">
 						<div class="steps-wrapper">
 							<ol class="use-steps">
-								<li>Нажмите на иконку Save Serve в левом сайдбаре VS Code</li>
-								<li>Нажмите на кнопку + чтобы добавить новый сервер</li>
-								<li>Заполните информацию о сервере:
+								<li>Нажми на иконку Save Serve в левом сайдбаре VS Code</li>
+								<li>Нажми на кнопку + чтобы добавить новый сервер</li>
+								<li>Заполни информацию о сервере:
 									<ul>
 										<li><strong>Имя сервера</strong> – понятное название для отображения в списке
 										</li>
@@ -141,8 +144,8 @@
 										<li><strong>Имя пользователя</strong> – логин для подключения</li>
 										<li><strong>Способ аутентификации</strong>:
 											<ul>
-												<li>🔑 <strong>По паролю</strong> – введите и сохраните пароль</li>
-												<li>🔐 <strong>По SSH-ключу</strong> – выберите файл ключа и пароль от
+												<li>🔑 <strong>По паролю</strong> – введи и сохрани пароль</li>
+												<li>🔐 <strong>По SSH-ключу</strong> – выбери файл ключа и пароль от
 													ключа, если есть</li>
 											</ul>
 										</li>
@@ -157,11 +160,11 @@
 					<div class="tab-pane" id="connect">
 						<div class="steps-wrapper">
 							<ol class="use-steps">
-								<li>Откройте боковую панель Save Serve в VS Code</li>
-								<li>Найдите нужный сервер в списке</li>
-								<li>Просто нажмите на сервер – VS Code мгновенно откроет терминал с SSH-подключением
+								<li>Открой боковую панель Save Serve в VS Code</li>
+								<li>Найди нужный сервер в списке</li>
+								<li>Просто нажми на сервер – VS Code мгновенно откроет терминал с SSH-подключением
 								</li>
-								<li>Готово! Теперь вы можете работать с сервером прямо из VS Code</li>
+								<li>Готово! Теперь ты можешь работать с сервером прямо из VS Code</li>
 							</ol>
 						</div>
 						<div class="ui-screenshot">
@@ -180,17 +183,17 @@
 				серверов:</p>
 			<div class="security-cards">
 				<div class="security-card">
-					<img src="img/windows.png" alt="Windows">
+					<img src="img/windows.svg" alt="Windows">
 					<h3>Windows</h3>
 					<p>Windows Credential Manager</p>
 				</div>
 				<div class="security-card">
-					<img src="img/macos.png" alt="macOS">
+					<img src="img/macos.svg" alt="macOS">
 					<h3>macOS</h3>
 					<p>Keychain</p>
 				</div>
 				<div class="security-card">
-					<img src="img/linux.png" alt="Linux">
+					<img src="img/linux.svg" alt="Linux">
 					<h3>Linux</h3>
 					<p>libsecret</p>
 				</div>
@@ -202,7 +205,7 @@
 	<section class="commands">
 		<div class="container">
 			<h2>Команды</h2>
-			<p>Используйте палитру команд F1 или Ctrl+Shift+P:</p>
+			<p>Используй палитру команд F1 или Ctrl+Shift+P:</p>
 			<div class="commands-table">
 				<table>
 					<thead>
@@ -270,7 +273,7 @@
 				</div>
 			</div>
 			<div class="footer-bottom">
-				<p>© 2024 Save Serve. Лицензия <a href="https://github.com/kianurivzzz/save-serve/blob/main/LICENSE"
+				<p>© 2025 Save Serve. Лицензия <a href="https://github.com/kianurivzzz/save-serve/blob/main/LICENSE"
 						target="_blank">MIT</a>.</p>
 			</div>
 		</div>
