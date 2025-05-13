@@ -5,5 +5,8 @@
     "command.connectToServer": "Подключиться к серверу",
     "command.refreshServers": "Обновить список серверов",
     "command.changeLanguage": "Сменить язык",
+    "command.addGroup": "Добавить группу",
+    "command.editGroup": "Редактировать группу",
+    "command.deleteGroup": "Удалить группу",
     "view.servers": "Серверы"
 }

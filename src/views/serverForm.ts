@@ -3,43 +3,54 @@ import { Server } from '../models/serverModel';
 import { LocalizationService } from '../services/localizationService';
 import { ServerService } from '../services/serverService';
 
+interface GroupOption {
+    label: string;
+    id: string | undefined;
+}
+
 export class ServerForm {
     private localization = LocalizationService.getInstance();
 
     constructor(private serverService: ServerService) {}
 
-    async showAddServerForm(): Promise<void> {
+    async showAddServerForm(): Promise<Server | undefined> {
         try {
             console.log(this.localization.localize('log.openAddForm'));
-            const server = await this.collectServerInfo();
-            if (server) {
-                console.log(this.localization.localize('log.serverDataCollected') + ':', JSON.stringify(server, null, 2));
-                await this.serverService.addServer(server);
-                vscode.window.showInformationMessage(this.localization.localize('form.serverAdded', server.name));
+            const serverData = await this.collectServerInfo();
+            if (serverData) {
+                console.log(this.localization.localize('log.serverDataCollected') + ':', JSON.stringify(serverData, null, 2));
+                const server = await this.serverService.addServer(serverData);
+                vscode.window.showInformationMessage(this.localization.localize('form.serverAdded', serverData.name));
+                return server;
             } else {
                 console.log(this.localization.localize('log.addCancelled'));
+                return undefined;
             }
         } catch (error) {
             console.error('Ошибка при добавлении сервера:', error);
             vscode.window.showErrorMessage(this.localization.localize('form.addError', error instanceof Error ? error.message : String(error)));
+            return undefined;
         }
     }
 
-    async showEditServerForm(serverToEdit: Server): Promise<void> {
+    async showEditServerForm(serverToEdit: Server): Promise<Server | undefined> {
         try {
             console.log(this.localization.localize('log.openEditForm', serverToEdit.id));
-            const server = await this.collectServerInfo(serverToEdit);
-            if (server) {
-                console.log(this.localization.localize('log.serverDataUpdated') + ':', JSON.stringify(server, null, 2));
-                const updatedServer: Server = { ...server, id: serverToEdit.id };
+            const serverData = await this.collectServerInfo(serverToEdit);
+            if (serverData) {
+                console.log(this.localization.localize('log.serverDataUpdated') + ':', JSON.stringify(serverData, null, 2));
+                const updatedServer: Server = { ...serverData, id: serverToEdit.id };
                 await this.serverService.updateServer(updatedServer);
-                vscode.window.showInformationMessage(this.localization.localize('form.serverUpdated', server.name));
+                vscode.window.showInformationMessage(this.localization.localize('form.serverUpdated', serverData.name));
+                return updatedServer;
             } else {
                 console.log(this.localization.localize('log.editCancelled'));
+                return undefined;
             }
         } catch (error) {
             console.error('Ошибка при обновлении сервера:', error);
             vscode.window.showErrorMessage(this.localization.localize('form.updateError', error instanceof Error ? error.message : String(error)));
+            return undefined;
         }
     }
 
@@ -50,7 +61,7 @@ export class ServerForm {
         const name = await vscode.window.showInputBox({
             prompt: this.localization.localize('form.namePrompt'),
             value: existingServer?.name || '',
-            validateInput: value => value ? null : this.localization.localize('form.nameValidation')
+            validateInput: (value: string) => value ? null : this.localization.localize('form.nameValidation')
         });
         if (name === undefined) {
             console.log(this.localization.localize('log.nameInputCancelled'));
@@ -61,7 +72,7 @@ export class ServerForm {
         const host = await vscode.window.showInputBox({
             prompt: this.localization.localize('form.hostPrompt'),
             value: existingServer?.host || '',
-            validateInput: value => value ? null : this.localization.localize('form.hostValidation')
+            validateInput: (value: string) => value ? null : this.localization.localize('form.hostValidation')
         });
         if (host === undefined) {
             console.log(this.localization.localize('log.hostInputCancelled'));
@@ -72,7 +83,7 @@ export class ServerForm {
         const portStr = await vscode.window.showInputBox({
             prompt: this.localization.localize('form.portPrompt'),
             value: existingServer?.port?.toString() || '22',
-            validateInput: value => {
+            validateInput: (value: string) => {
                 if (!value) {
                     return null;
                 }; // Разрешает пустое значение для порта по умолчанию
@@ -92,11 +103,68 @@ export class ServerForm {
         const username = await vscode.window.showInputBox({
             prompt: this.localization.localize('form.usernamePrompt'),
             value: existingServer?.username || '',
-            validateInput: value => value ? null : this.localization.localize('form.usernameValidation')
+            validateInput: (value: string) => value ? null : this.localization.localize('form.usernameValidation')
         });
         if (username === undefined) {
             console.log(this.localization.localize('log.usernameInputCancelled'));
             return undefined;
+        }
+
+        // Выбор группы сервера
+        let groupId: string | undefined = existingServer?.groupId;
+        const groups = await this.serverService.getGroups();
+
+        if (groups.length > 0) {
+            // Создаем список групп для выбора
+            const groupOptions: GroupOption[] = [
+                { label: this.localization.localize('form.noGroup') || 'Без группы', id: undefined }
+            ];
+
+            groups.forEach(group => {
+                groupOptions.push({ label: group.name, id: group.id });
+            });
+
+            // Опция для создания новой группы
+            groupOptions.push({ label: this.localization.localize('form.createGroup') || '+ Создать новую группу', id: 'create' });
+
+            const selectedGroup = await vscode.window.showQuickPick(groupOptions, {
+                placeHolder: this.localization.localize('form.selectGroup') || 'Выберите группу для сервера',
+            });
+
+            if (selectedGroup === undefined) {
+                console.log('Выбор группы отменен');
+                return undefined;
+            }
+
+            // Если выбрано создание новой группы
+            if (selectedGroup.id === 'create') {
+                const newGroupName = await vscode.window.showInputBox({
+                    prompt: this.localization.localize('form.newGroupName') || 'Введите название новой группы',
+                    validateInput: (value: string) => value ? null : this.localization.localize('form.groupNameValidation') || 'Название группы не может быть пустым'
+                });
+
+                if (newGroupName === undefined) {
+                    console.log('Создание группы отменено');
+                    return undefined;
+                }
+
+                const groupDescription = await vscode.window.showInputBox({
+                    prompt: this.localization.localize('form.groupDescription') || 'Введите описание группы (опционально)',
+                });
+
+                if (groupDescription === undefined) {
+                    console.log('Создание группы отменено');
+                    return undefined;
+                }
+
+                // Создаем новую группу
+                const newGroup = await this.serverService.addGroup(newGroupName, groupDescription || undefined);
+                groupId = newGroup.id;
+                console.log(`Создана новая группа: ${newGroup.name} (${newGroup.id})`);
+            } else {
+                groupId = selectedGroup.id;
+                console.log(`Выбрана группа: ${selectedGroup.label} (${groupId || 'без группы'})`);
+            }
         }
 
         // Способ аутентификации
@@ -170,7 +238,8 @@ export class ServerForm {
             password,
             usePrivateKey,
             privateKeyPath,
-            privateKeyPassword
+            privateKeyPassword,
+            groupId
         };
     }
 }

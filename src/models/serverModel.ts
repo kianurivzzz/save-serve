@@ -8,4 +8,11 @@ export interface Server {
     usePrivateKey: boolean;
     privateKeyPath?: string;
     privateKeyPassword?: string;
+    groupId?: string;
+}
+
+export interface ServerGroup {
+    id: string;
+    name: string;
+    description?: string;
 }

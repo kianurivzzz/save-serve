@@ -2,7 +2,7 @@
   "name": "save-serve",
   "displayName": "Save Serve",
   "description": "Save accesses to your servers in a couple mouse clicks, then quickly connect to them. Right in your favorite code editor. Easy and secure. Use Save Serve for free!",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "publisher": "nkarasyov",
   "engines": {
     "vscode": "^1.80.0"
@@ -57,12 +57,32 @@
         "command": "save-serve.changeLanguage",
         "title": "%command.changeLanguage%",
         "icon": "$(globe)"
+      },
+      {
+        "command": "save-serve.addGroup",
+        "title": "%command.addGroup%",
+        "icon": "$(new-folder)"
+      },
+      {
+        "command": "save-serve.editGroup",
+        "title": "%command.editGroup%",
+        "icon": "$(edit)"
+      },
+      {
+        "command": "save-serve.deleteGroup",
+        "title": "%command.deleteGroup%",
+        "icon": "$(trash)"
       }
     ],
     "menus": {
       "view/title": [
         {
           "command": "save-serve.addServer",
+          "when": "view == saveServeServers",
+          "group": "navigation"
+        },
+        {
+          "command": "save-serve.addGroup",
           "when": "view == saveServeServers",
           "group": "navigation"
         },
@@ -91,6 +111,21 @@
         {
           "command": "save-serve.deleteServer",
           "when": "view == saveServeServers && viewItem == server",
+          "group": "inline"
+        },
+        {
+          "command": "save-serve.editGroup",
+          "when": "view == saveServeServers && viewItem == group",
+          "group": "inline"
+        },
+        {
+          "command": "save-serve.deleteGroup",
+          "when": "view == saveServeServers && viewItem == group",
+          "group": "inline"
+        },
+        {
+          "command": "save-serve.addServer",
+          "when": "view == saveServeServers && (viewItem == group || viewItem == ungrouped)",
           "group": "inline"
         }
       ]

@@ -5,5 +5,8 @@
     "command.connectToServer": "Connect to Server",
     "command.refreshServers": "Refresh Server List",
     "command.changeLanguage": "Change Language",
+    "command.addGroup": "Add Group",
+    "command.editGroup": "Edit Group",
+    "command.deleteGroup": "Delete Group",
     "view.servers": "Servers"
 }

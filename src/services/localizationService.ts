@@ -47,10 +47,23 @@ export class LocalizationService {
             // Загружаем файлы локализации
             const ruPath = path.join(extensionPath, 'l10n', 'bundle.l10n.ru.json');
             const enPath = path.join(extensionPath, 'l10n', 'bundle.l10n.en.json');
+            const defaultPath = path.join(extensionPath, 'l10n', 'bundle.l10n.json');
+
+            // Сначала загружаем базовый файл локализации, который будет использоваться как запасной вариант
+            if (fs.existsSync(defaultPath)) {
+                const defaultContent = fs.readFileSync(defaultPath, 'utf8');
+                const defaultMessages = JSON.parse(defaultContent);
+                // Добавляем базовые сообщения в обе локализации для обеспечения отказоустойчивости
+                this.messages['ru'] = { ...defaultMessages };
+                this.messages['en'] = { ...defaultMessages };
+                console.log('Загружен базовый файл локализации');
+            } else {
+                console.error('Базовый файл локализации не найден:', defaultPath);
+            }
 
             if (fs.existsSync(ruPath)) {
                 const ruContent = fs.readFileSync(ruPath, 'utf8');
-                this.messages['ru'] = JSON.parse(ruContent);
+                this.messages['ru'] = { ...this.messages['ru'], ...JSON.parse(ruContent) };
                 console.log('Загружен файл русской локализации');
             } else {
                 console.error('Файл русской локализации не найден:', ruPath);
@@ -58,7 +71,7 @@ export class LocalizationService {
 
             if (fs.existsSync(enPath)) {
                 const enContent = fs.readFileSync(enPath, 'utf8');
-                this.messages['en'] = JSON.parse(enContent);
+                this.messages['en'] = { ...this.messages['en'], ...JSON.parse(enContent) };
                 console.log('Загружен файл английской локализации');
             } else {
                 console.error('Файл английской локализации не найден:', enPath);
@@ -66,7 +79,11 @@ export class LocalizationService {
 
             // Выводим отладочную информацию
             console.log(`Текущий язык: ${this.currentLanguage}`);
-            console.log(`Количество ключей для текущего языка: ${Object.keys(this.messages[this.currentLanguage] || {}).length}`);
+            console.log(`Количество ключей для ru: ${Object.keys(this.messages['ru'] || {}).length}`);
+            console.log(`Количество ключей для en: ${Object.keys(this.messages['en'] || {}).length}`);
+
+            // Установка контекста для VS Code, чтобы UI компоненты тоже знали о текущем языке
+            vscode.commands.executeCommand('setContext', 'save-serve.language', this.currentLanguage);
         } catch (error) {
             console.error('Ошибка при загрузке локализации:', error);
         }
@@ -80,23 +97,35 @@ export class LocalizationService {
      */
     public localize(key: string, ...args: any[]): string {
         try {
-            // Проверяем, есть ли ключ в текущем языке
-            const lang = this.currentLanguage === 'ru' ? 'ru' : 'en';
-            let message = this.messages[lang][key] || key;
+            // Проверяем наличие ключа в текущем языке
+            let lang = this.currentLanguage;
 
-            // Если ключ не найден, пробуем найти в другом языке
-            if (message === key && lang === 'ru') {
-                message = this.messages['en'][key] || key;
-            } else if (message === key && lang === 'en') {
-                message = this.messages['ru'][key] || key;
+            // Если текущий язык не ru и не en, используем en как запасной вариант
+            if (lang !== 'ru' && lang !== 'en') {
+                lang = 'en';
+            }
+
+            let message = this.messages[lang][key];
+
+            // Если ключ не найден в текущем языке, ищем в другом языке
+            if (!message && lang === 'ru') {
+                message = this.messages['en'][key];
+            } else if (!message && lang === 'en') {
+                message = this.messages['ru'][key];
+            }
+
+            // Если ключ не найден ни в одном языке, возвращаем сам ключ
+            if (!message) {
+                console.warn(`Ключ локализации не найден: ${key}`);
+                return this.formatString(key, args);
             }
 
             // Форматируем строку с параметрами
             return this.formatString(message, args);
         } catch (error) {
             console.error(`Ошибка локализации для ключа "${key}":`, error);
-            // В случае ошибки также форматируем строку с параметрами
-            return this.formatString(key, args);
+            // В случае ошибки возвращаем ключ
+            return key;
         }
     }
 
@@ -119,7 +148,21 @@ export class LocalizationService {
      * @returns Текущий язык (ru или en)
      */
     public getCurrentLanguage(): string {
-        return vscode.workspace.getConfiguration('save-serve').get('language', 'ru');
+        const language = vscode.workspace.getConfiguration('save-serve').get('language');
+
+        // Проверяем, что значение языка допустимое
+        if (language === 'ru' || language === 'en') {
+            return language;
+        }
+
+        // Если значение не установлено или недопустимое, используем язык интерфейса VS Code
+        const vscodeLanguage = vscode.env.language;
+        if (vscodeLanguage.startsWith('ru')) {
+            return 'ru';
+        }
+
+        // По умолчанию используем английский
+        return 'en';
     }
 
     /**
@@ -127,6 +170,11 @@ export class LocalizationService {
      * @param language Язык – ru или en
      */
     public async setLanguage(language: string): Promise<void> {
+        if (language !== 'ru' && language !== 'en') {
+            console.error(`Недопустимый язык: ${language}`);
+            return;
+        }
+
         await vscode.workspace.getConfiguration('save-serve').update('language', language, true);
         this.currentLanguage = language;
         // Обновляем локализацию

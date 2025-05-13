@@ -5,8 +5,9 @@ import { Server } from './models/serverModel';
 import { LocalizationService } from './services/localizationService';
 import { ServerService } from './services/serverService';
 import { SshService } from './services/sshService';
+import { GroupForm } from './views/groupForm';
 import { ServerForm } from './views/serverForm';
-import { ServerTreeItem, ServerTreeProvider } from './views/serverTreeProvider';
+import { GroupTreeItem, ServerTreeItem, ServerTreeProvider, UngroupedServersItem } from './views/serverTreeProvider';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -17,16 +18,18 @@ export function activate(context: vscode.ExtensionContext) {
 	// Инициализация локализации
 	const localization = LocalizationService.getInstance();
 	localization.setExtensionContext(context);
-	console.log('Расширение активировано:', localization.localize('log.extensionActivated'));
 
 	// Получаем текущий язык и применяем его
 	const language = localization.getCurrentLanguage();
 	vscode.commands.executeCommand('setContext', 'save-serve.language', language);
 
+	console.log('Расширение активировано:', localization.localize('log.extensionActivated'));
+
 	// Инициализация сервисов
 	const serverService = new ServerService(context);
 	const sshService = new SshService();
 	const serverForm = new ServerForm(serverService);
+	const groupForm = new GroupForm(serverService);
 
 	// Регистрация представления серверов
 	const serverTreeProvider = new ServerTreeProvider(serverService);
@@ -36,11 +39,36 @@ export function activate(context: vscode.ExtensionContext) {
 	});
 	context.subscriptions.push(serversView);
 
-	// Регистрация команд
+	// Добавляем прослушивание изменений конфигурации для обновления языка
 	context.subscriptions.push(
-		vscode.commands.registerCommand('save-serve.addServer', async () => {
+		vscode.workspace.onDidChangeConfiguration(e => {
+			if (e.affectsConfiguration('save-serve.language')) {
+				// Обновляем язык во всех компонентах UI
+				const newLanguage = localization.getCurrentLanguage();
+				vscode.commands.executeCommand('setContext', 'save-serve.language', newLanguage);
+				// Обновляем дерево серверов для перерисовки с новым языком
+				serverTreeProvider.refresh();
+			}
+		})
+	);
+
+	// Регистрация команд для работы с серверами
+	context.subscriptions.push(
+		vscode.commands.registerCommand('save-serve.addServer', async (item?: GroupTreeItem | UngroupedServersItem) => {
 			console.log(localization.localize('log.addServerCommand'));
-			await serverForm.showAddServerForm();
+
+			// Если команда вызвана из контекстного меню группы,
+			// нужно сначала получить форму сервера, а затем добавить его в группу
+			const server = await serverForm.showAddServerForm();
+
+			// Если есть элемент и команда была вызвана на группе, добавляем сервер в эту группу
+			if (server && item instanceof GroupTreeItem) {
+				await serverService.moveServerToGroup(server.id, item.group.id);
+			} else if (server && item instanceof UngroupedServersItem) {
+				// Если это "Без группы", оставляем сервер без группы
+				await serverService.moveServerToGroup(server.id, undefined);
+			}
+
 			serverTreeProvider.refresh();
 		}),
 
@@ -140,6 +168,74 @@ export function activate(context: vscode.ExtensionContext) {
 			);
 			if (reload) {
 				await vscode.commands.executeCommand('workbench.action.reloadWindow');
+			}
+		})
+	);
+
+	// Регистрация команд для работы с группами
+	context.subscriptions.push(
+		vscode.commands.registerCommand('save-serve.addGroup', async () => {
+			console.log(localization.localize('log.addGroupCommand'));
+			await groupForm.showAddGroupForm();
+			serverTreeProvider.refresh();
+		}),
+
+		vscode.commands.registerCommand('save-serve.editGroup', async (item: GroupTreeItem) => {
+			console.log(localization.localize('log.editGroupCommand', item?.group?.id));
+			if (!item || !item.group) {
+				console.error('Ошибка – не передана группа для редактирования');
+				vscode.window.showErrorMessage('Не удалось отредактировать группу: группа не найдена');
+				return;
+			}
+			await groupForm.showEditGroupForm(item.group);
+			serverTreeProvider.refresh();
+		}),
+
+		vscode.commands.registerCommand('save-serve.deleteGroup', async (item: GroupTreeItem) => {
+			console.log(localization.localize('log.deleteGroupCommand', item?.group?.id));
+			if (!item || !item.group) {
+				console.error('Ошибка – не передана группа для удаления');
+				vscode.window.showErrorMessage('Не удалось удалить группу: группа не найдена');
+				return;
+			}
+
+			// Получаем серверы в группе, чтобы определить, есть ли они
+			const serversInGroup = await serverService.getServersInGroup(item.group.id);
+
+			if (serversInGroup.length > 0) {
+				// Если есть серверы, спрашиваем, что с ними делать
+				const confirm = await vscode.window.showWarningMessage(
+					localization.localize('warning.confirmDeleteGroupWithServers', item.group.name),
+					{ modal: true },
+					localization.localize('button.deleteServers'),
+					localization.localize('button.keepServers'),
+					localization.localize('button.no')
+				);
+
+				if (confirm === localization.localize('button.deleteServers')) {
+					// Удаляем группу вместе с серверами
+					await serverService.deleteGroup(item.group.id, true);
+					serverTreeProvider.refresh();
+					vscode.window.showInformationMessage(localization.localize('info.groupDeleted', item.group.name));
+				} else if (confirm === localization.localize('button.keepServers')) {
+					// Сохраняем серверы, но удаляем группу
+					await serverService.deleteGroup(item.group.id, false);
+					serverTreeProvider.refresh();
+					vscode.window.showInformationMessage(localization.localize('info.groupDeleted', item.group.name));
+				}
+			} else {
+				// Если нет серверов, просто спрашиваем о подтверждении
+				const confirm = await vscode.window.showWarningMessage(
+					localization.localize('warning.confirmDeleteGroup', item.group.name),
+					{ modal: true },
+					localization.localize('button.yes'), localization.localize('button.no')
+				);
+
+				if (confirm === localization.localize('button.yes')) {
+					await serverService.deleteGroup(item.group.id);
+					serverTreeProvider.refresh();
+					vscode.window.showInformationMessage(localization.localize('info.groupDeleted', item.group.name));
+				}
 			}
 		})
 	);
