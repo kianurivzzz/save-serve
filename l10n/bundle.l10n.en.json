@@ -8,6 +8,7 @@
   "command.addGroup": "Add Group",
   "command.editGroup": "Edit Group",
   "command.deleteGroup": "Delete Group",
+  "command.donate": "Support Developer",
   "view.servers": "Servers",
   "info.serverDeleted": "Server {0} deleted",
   "info.connectionSuccess": "Connected to server {0} ({1}@{2})",
@@ -37,6 +38,7 @@
   "log.addGroupCommand": "Add group command executed",
   "log.editGroupCommand": "Edit group command executed: {0}",
   "log.deleteGroupCommand": "Delete group command executed: {0}",
+  "log.donateCommand": "Donate command executed",
   "info.languageChanged": "Extension language changed",
   "info.reloadRequired": "You need to reload VS Code to apply the new language",
   "button.reload": "Reload",
@@ -107,5 +109,6 @@
   "service.deleteNotFound": "Server with id {0} not found",
 
   "treeitem.created": "Server item created",
-  "group.ungrouped": "Ungrouped"
+  "group.ungrouped": "Ungrouped",
+  "donate.chooseDonationService": "Choose donation service"
 }

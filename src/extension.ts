@@ -169,6 +169,33 @@ export function activate(context: vscode.ExtensionContext) {
 			if (reload) {
 				await vscode.commands.executeCommand('workbench.action.reloadWindow');
 			}
+		}),
+
+		// Регистрация команды для пожертвований
+		vscode.commands.registerCommand('save-serve.donate', async () => {
+			console.log(localization.localize('log.donateCommand'));
+
+			const options = [
+				'BuyMeACoffee',
+				'CloudTips'
+			];
+
+			const selectedOption = await vscode.window.showQuickPick(options, {
+				placeHolder: localization.localize('donate.chooseDonationService')
+			});
+
+			if (selectedOption) {
+				let url = '';
+				if (selectedOption === 'BuyMeACoffee') {
+					url = 'https://www.buymeacoffee.com/nkarasyov';
+				} else if (selectedOption === 'CloudTips') {
+					url = 'https://pay.cloudtips.ru/p/920f6d9e';
+				}
+
+				if (url) {
+					vscode.env.openExternal(vscode.Uri.parse(url));
+				}
+			}
 		})
 	);
 

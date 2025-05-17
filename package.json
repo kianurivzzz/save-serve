@@ -2,7 +2,7 @@
   "name": "save-serve",
   "displayName": "Save Serve",
   "description": "Save accesses to your servers in a couple mouse clicks, then quickly connect to them. Right in your favorite code editor. Easy and secure. Use Save Serve for free!",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "publisher": "nkarasyov",
   "engines": {
     "vscode": "^1.80.0"
@@ -72,6 +72,11 @@
         "command": "save-serve.deleteGroup",
         "title": "%command.deleteGroup%",
         "icon": "$(trash)"
+      },
+      {
+        "command": "save-serve.donate",
+        "title": "%command.donate%",
+        "icon": "$(heart)"
       }
     ],
     "menus": {
@@ -93,6 +98,11 @@
         },
         {
           "command": "save-serve.changeLanguage",
+          "when": "view == saveServeServers",
+          "group": "navigation"
+        },
+        {
+          "command": "save-serve.donate",
           "when": "view == saveServeServers",
           "group": "navigation"
         }

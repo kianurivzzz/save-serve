@@ -8,5 +8,6 @@
     "command.addGroup": "Add Group",
     "command.editGroup": "Edit Group",
     "command.deleteGroup": "Delete Group",
+    "command.donate": "Support me",
     "view.servers": "Servers"
 }
