@@ -576,8 +576,10 @@ nav a {
 }
 
 .security-note {
-	max-width: 500px;
+	margin-top: 2rem;
+	text-align: center;
 	font-style: italic;
+	color: var(--vscode-text-dim);
 }
 
 /* Команды */
@@ -608,6 +610,81 @@ th {
 
 tr:hover {
 	background-color: var(--vscode-bg-lighter);
+}
+
+/* Стили для секции поддержки */
+.support p {
+	max-width: 800px;
+	margin: 0 auto 2rem;
+	text-align: center;
+	color: var(--vscode-text-light);
+}
+
+.donation-options {
+	display: flex;
+	justify-content: center;
+	gap: 2rem;
+	margin: 3rem 0;
+}
+
+.donation-card {
+	background-color: var(--vscode-bg-lighter);
+	border-radius: var(--border-radius);
+	padding: 2rem;
+	flex-basis: 300px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+	transition: transform 0.3s ease, box-shadow 0.3s ease;
+	border: 1px solid var(--vscode-border);
+}
+
+.donation-card:hover {
+	transform: translateY(-5px);
+	box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+.donation-card img {
+	height: 70px;
+	margin-bottom: 1.5rem;
+}
+
+.donation-emoji {
+	font-size: 4rem;
+	margin-bottom: 1.5rem;
+}
+
+.donation-card h3 {
+	color: var(--vscode-text-light);
+	margin-bottom: 1rem;
+}
+
+.donation-card p {
+	color: var(--vscode-text-dim);
+	margin-bottom: 1.5rem;
+	font-size: 0.9rem;
+}
+
+.donate-btn {
+	padding: 0.8rem 1.5rem;
+	background-color: var(--vscode-button-bg);
+	color: var(--vscode-button-fg);
+	border-radius: var(--border-radius-sm);
+	font-weight: 500;
+	transition: background-color 0.2s ease;
+	display: inline-block;
+}
+
+.donate-btn:hover {
+	background-color: var(--vscode-button-hover-bg);
+	text-decoration: none;
+}
+
+.donation-note {
+	margin-top: 2rem !important;
+	font-style: italic;
+	color: var(--vscode-text-dim) !important;
 }
 
 /* Подвал */
@@ -722,6 +799,14 @@ footer {
 		flex-basis: calc(50% - 1rem);
 	}
 
+	.donation-options {
+		flex-wrap: wrap;
+	}
+
+	.donation-card {
+		flex-basis: calc(50% - 1rem);
+	}
+
 	.footer-content {
 		flex-direction: column;
 		gap: 3rem;
@@ -750,6 +835,10 @@ footer {
 	}
 
 	.security-card {
+		flex-basis: 100%;
+	}
+
+	.donation-card {
 		flex-basis: 100%;
 	}
 
