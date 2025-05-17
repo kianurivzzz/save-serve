@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	// Анимация появления элементов при скролле
 	function revealOnScroll() {
 		const elements = document.querySelectorAll(
-			'.feature-card, .step, .security-card'
+			'.feature-card, .step, .security-card, .group-feature'
 		);
 
 		elements.forEach(element => {
@@ -55,7 +55,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	// Применяем начальные стили для анимации
 	document
-		.querySelectorAll('.feature-card, .step, .security-card')
+		.querySelectorAll(
+			'.feature-card, .step, .security-card, .group-feature'
+		)
 		.forEach(element => {
 			element.style.opacity = '0';
 			element.style.transform = 'translateY(20px)';
@@ -76,5 +78,30 @@ document.addEventListener('DOMContentLoaded', function () {
 		logoImage.addEventListener('mouseleave', () => {
 			logoImage.style.filter = 'none';
 		});
+	}
+
+	// Работа с языковыми настройками
+	const langSwitchElement = document.querySelector('.lang-switch');
+	if (langSwitchElement) {
+		langSwitchElement.addEventListener('click', function () {
+			// При клике на переключатель сохраняем выбранный язык
+			const targetLang = this.getAttribute('href').includes('index-en')
+				? 'en'
+				: 'ru';
+			localStorage.setItem('save-serve-lang', targetLang);
+		});
+
+		// Проверяем сохраненный язык при загрузке страницы
+		const savedLang = localStorage.getItem('save-serve-lang');
+		const currentLang = document.documentElement.lang;
+
+		// Если сохраненный язык отличается от текущего, перенаправляем
+		if (savedLang && savedLang !== currentLang) {
+			const targetPage =
+				savedLang === 'en' ? 'index-en.html' : 'index.html';
+			if (!window.location.href.includes(targetPage)) {
+				window.location.href = targetPage;
+			}
+		}
 	}
 });
