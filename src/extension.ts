@@ -6,8 +6,10 @@ import { LocalizationService } from './services/localizationService';
 import { ServerService } from './services/serverService';
 import { SshService } from './services/sshService';
 import { GroupForm } from './views/groupForm';
+import { GroupWebviewForm } from './views/groupWebviewForm';
 import { ServerForm } from './views/serverForm';
 import { GroupTreeItem, ServerTreeItem, ServerTreeProvider, UngroupedServersItem } from './views/serverTreeProvider';
+import { ServerWebviewForm } from './views/serverWebviewForm';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -28,8 +30,12 @@ export function activate(context: vscode.ExtensionContext) {
 	// Инициализация сервисов
 	const serverService = new ServerService(context);
 	const sshService = new SshService();
+
+	// Создаем как старые, так и новые формы для возможности переключения
 	const serverForm = new ServerForm(serverService);
 	const groupForm = new GroupForm(serverService);
+	const serverWebviewForm = new ServerWebviewForm(serverService, context);
+	const groupWebviewForm = new GroupWebviewForm(serverService, context);
 
 	// Регистрация представления серверов
 	const serverTreeProvider = new ServerTreeProvider(serverService);
@@ -57,9 +63,8 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.commands.registerCommand('save-serve.addServer', async (item?: GroupTreeItem | UngroupedServersItem) => {
 			console.log(localization.localize('log.addServerCommand'));
 
-			// Если команда вызвана из контекстного меню группы,
-			// нужно сначала получить форму сервера, а затем добавить его в группу
-			const server = await serverForm.showAddServerForm();
+			// Используем новую webview-форму вместо старой последовательности диалогов
+			const server = await serverWebviewForm.showAddServerWebview();
 
 			// Если есть элемент и команда была вызвана на группе, добавляем сервер в эту группу
 			if (server && item instanceof GroupTreeItem) {
@@ -79,7 +84,8 @@ export function activate(context: vscode.ExtensionContext) {
 				vscode.window.showErrorMessage(localization.localize('error.cannotEdit'));
 				return;
 			}
-			await serverForm.showEditServerForm(item.server);
+			// Используем новую webview-форму для редактирования
+			await serverWebviewForm.showEditServerWebview(item.server);
 			serverTreeProvider.refresh();
 		}),
 

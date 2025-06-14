@@ -42,7 +42,6 @@
   "info.languageChanged": "Extension language changed",
   "info.reloadRequired": "You need to reload VS Code to apply the new language",
   "button.reload": "Reload",
-
   "form.serverAdded": "Server {0} successfully added",
   "form.serverUpdated": "Server {0} successfully updated",
   "form.namePrompt": "Enter server name",
@@ -66,12 +65,11 @@
   "form.selectGroup": "Select group for server",
   "form.newGroupName": "Enter new group name",
   "form.groupNameValidation": "Group name cannot be empty",
-  "form.groupDescription": "Enter group description (optional)",
+  "form.groupDescription": "Enter group description. Optional",
   "form.groupAdded": "Group {0} successfully added",
   "form.groupUpdated": "Group {0} successfully updated",
   "form.groupAddError": "Error adding group: {0}",
   "form.groupUpdateError": "Error updating group: {0}",
-
   "log.openAddForm": "Opening add server form",
   "log.openEditForm": "Opening edit server form: {0}",
   "log.serverDataCollected": "Server data collected",
@@ -90,7 +88,6 @@
   "log.sshKeyPasswordCancelled": "SSH key password input cancelled",
   "log.passwordCancelled": "Server password input cancelled",
   "log.infoCollectionComplete": "Server information collection completed",
-
   "service.loadStart": "Loading servers from storage: {0}",
   "service.loadFound": "Data found",
   "service.loadNotFound": "Data not found",
@@ -107,7 +104,6 @@
   "service.deleteStart": "Deleting server: {0}",
   "service.deleteSuccess": "Server successfully deleted",
   "service.deleteNotFound": "Server with id {0} not found",
-
   "treeitem.created": "Server item created",
   "group.ungrouped": "Ungrouped",
   "donate.chooseDonationService": "Choose donation service"

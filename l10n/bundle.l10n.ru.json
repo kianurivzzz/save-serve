@@ -43,7 +43,6 @@
   "info.languageChanged": "Язык расширения изменен",
   "info.reloadRequired": "Для применения нового языка необходимо перезагрузить VS Code",
   "button.reload": "Перезагрузить",
-
   "form.serverAdded": "Сервер {0} успешно добавлен",
   "form.serverUpdated": "Сервер {0} успешно обновлен",
   "form.namePrompt": "Введи имя сервера",
@@ -72,7 +71,6 @@
   "form.groupUpdated": "Группа {0} успешно обновлена",
   "form.groupAddError": "Ошибка при добавлении группы: {0}",
   "form.groupUpdateError": "Ошибка при обновлении группы: {0}",
-
   "log.openAddForm": "Открытие формы добавления сервера",
   "log.openEditForm": "Открытие формы редактирования сервера: {0}",
   "log.serverDataCollected": "Данные сервера собраны",
@@ -91,7 +89,6 @@
   "log.sshKeyPasswordCancelled": "Ввод пароля для SSH-ключа отменён",
   "log.passwordCancelled": "Ввод пароля для сервера отменён",
   "log.infoCollectionComplete": "Сбор информации о сервере завершён",
-
   "service.loadStart": "Загрузка серверов из хранилища: {0}",
   "service.loadFound": "Данные найдены",
   "service.loadNotFound": "Данные не найдены",
@@ -108,7 +105,18 @@
   "service.deleteStart": "Удаление сервера: {0}",
   "service.deleteSuccess": "Сервер успешно удален",
   "service.deleteNotFound": "Сервер с id {0} не найден",
-
-  "treeitem.created": "Создан элемент сервера",
-  "group.ungrouped": "Без группы"
+  "treeitem.created": "Элемент сервера создан",
+  "group.ungrouped": "Без группы",
+  "donate.chooseDonationService": "Выберите сервис для пожертвований",
+  "form.addServer": "Добавить сервер",
+  "form.editServer": "Редактировать сервер: {0}",
+  "form.addGroup": "Добавить группу",
+  "form.editGroup": "Редактировать группу: {0}",
+  "form.selectFile": "Выбрать файл",
+  "form.fieldRequired": "Это поле обязательно для заполнения",
+  "form.sshKeyPassword": "Пароль SSH-ключа (опционально)",
+  "form.groupDescriptionPlaceholder": "Введите описание группы (необязательно)",
+  "button.add": "Добавить",
+  "button.update": "Обновить",
+  "button.cancel": "Отмена"
 }
