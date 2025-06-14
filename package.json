@@ -2,7 +2,7 @@
   "name": "save-serve",
   "displayName": "Save Serve",
   "description": "Save accesses to your servers in a couple mouse clicks, then quickly connect to them. Right in your favorite code editor. Easy and secure. Use Save Serve for free!",
-  "version": "0.0.8",
+  "version": "0.1.0",
   "publisher": "nkarasyov",
   "engines": {
     "vscode": "^1.80.0"

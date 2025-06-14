@@ -230,7 +230,7 @@ interact
         terminal.sendText(`fi`);
     }
 
-    /**
+        /**
      * Метод подключения для Windows
      */
     private async connectWithWindowsMethod(terminal: vscode.Terminal, server: Server): Promise<void> {
@@ -239,54 +239,67 @@ interact
         const username = server.username;
         const password = server.password || '';
 
-        // Создаёт уникальные имена файлов
+        // Создаём уникальные имена файлов
         const sessionId = crypto.randomBytes(8).toString('hex');
         const tmpDir = os.tmpdir();
-        const psScriptPath = path.join(tmpDir, `ss_ps_${sessionId}.ps1`);
-
-        // Создаёт PowerShell скрипт для автоматизации SSH
-        const psScriptContent = `
-# PowerShell скрипт для автоматизации SSH входа
-$password = '${password.replace(/'/g, "''")}'
-
-$psi = New-Object System.Diagnostics.ProcessStartInfo
-$psi.FileName = "ssh"
-$psi.Arguments = "${port !== 22 ? `-p ${port} ` : ''}-o StrictHostKeyChecking=no ${username}@${host}"
-$psi.UseShellExecute = $false
-$psi.RedirectStandardInput = $true
-$psi.RedirectStandardOutput = $true
-$psi.RedirectStandardError = $true
-
-$process = New-Object System.Diagnostics.Process
-$process.StartInfo = $psi
-$process.Start() | Out-Null
-
-Start-Sleep -Seconds 1
-$process.StandardInput.WriteLine($password)
-
-# Выводим результат
-$outputReader = $process.StandardOutput.ReadToEndAsync()
-$errorReader = $process.StandardError.ReadToEndAsync()
-
-$process.WaitForExit()
-Write-Host $outputReader.Result
-Write-Host $errorReader.Result -ForegroundColor Red
-
-# Удаляем этот скрипт
-Remove-Item -Path $MyInvocation.MyCommand.Path -Force
-`;
+        const pwdFilePath = path.join(tmpDir, `ss_pwd_${sessionId}.txt`);
+        const batScriptPath = path.join(tmpDir, `ss_connect_${sessionId}.bat`);
 
         try {
-            // Записывает PowerShell скрипт
-            await fs.promises.writeFile(psScriptPath, psScriptContent);
+            // Создаём временный файл с паролем
+            await fs.promises.writeFile(pwdFilePath, password);
 
-            // Запускает PowerShell скрипт
-            terminal.sendText(`powershell -ExecutionPolicy Bypass -File "${psScriptPath}"`);
+            // Создаём batch скрипт для скрытой передачи пароля
+            const batScriptContent = `@echo off
+echo Подключение к ${server.name}...
+
+rem Создаём временную переменную с паролем
+for /f "delims=" %%i in ('type "${pwdFilePath}"') do set "SSH_PASSWORD=%%i"
+
+rem Удаляем файл с паролем сразу после чтения
+del /q "${pwdFilePath}" 2>nul
+
+rem Используем echo для передачи пароля в SSH через pipe
+echo %SSH_PASSWORD% | ssh ${port !== 22 ? `-p ${port} ` : ''}-o StrictHostKeyChecking=no -o PasswordAuthentication=yes ${username}@${host}
+
+rem Если SSH завершился неудачно, попробуем ещё раз интерактивно
+if %ERRORLEVEL% neq 0 (
+    echo Повторная попытка подключения...
+    ssh ${port !== 22 ? `-p ${port} ` : ''}-o StrictHostKeyChecking=no ${username}@${host}
+)
+
+rem Очищаем переменную с паролем
+set "SSH_PASSWORD="
+
+rem Удаляем этот скрипт
+del /q "${batScriptPath}" 2>nul
+`;
+
+            // Записываем batch скрипт
+            await fs.promises.writeFile(batScriptPath, batScriptContent);
+
+            // Запускаем скрипт
+            terminal.sendText(`call "${batScriptPath}"`);
+
+            // Резервная очистка временных файлов
+            setTimeout(() => {
+                try {
+                    if (fs.existsSync(pwdFilePath)) {
+                        fs.unlinkSync(pwdFilePath);
+                    }
+                    if (fs.existsSync(batScriptPath)) {
+                        fs.unlinkSync(batScriptPath);
+                    }
+                    console.log('Временные файлы очищены');
+                } catch (error) {
+                    console.log('Предупреждение при очистке файлов:', error);
+                }
+            }, 10000);
 
         } catch (error) {
-            console.error('Ошибка при создании PowerShell скрипта:', error);
+            console.error('Ошибка при создании Windows SSH скрипта:', error);
 
-            // Запускает обычный SSH без показа пароля
+            // Fallback - обычное SSH подключение
             terminal.sendText(`ssh ${port !== 22 ? `-p ${port} ` : ''}-o StrictHostKeyChecking=no ${username}@${host}`);
         }
     }
