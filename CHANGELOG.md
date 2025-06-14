@@ -1,51 +1,51 @@
-# Журнал изменений
+# Changelog
 
-## [0.0.1] - Первый выпуск
+## [0.0.1] - Initial Release
 
--   Первая версия расширения Save Serve;
--   Базовая функциональность для управления серверами;
--   Поддержка SSH-подключений.
+-   First version of Save Serve extension;
+-   Basic functionality for server management;
+-   SSH connection support.
 
-## [0.0.2] - Исправление лого
+## [0.0.2] - Logo Fix
 
--   Исправление логотипа;
--   Обновление README.md.
+-   Fixed logo;
+-   Updated README.md.
 
-## [0.0.3] - Исправление подключения
+## [0.0.3] - Connection Fix
 
--   Исправлен баг с тем, что подключение не всегда происходило с первого раза на macOS.
+-   Fixed bug where connection didn't always work on the first try on macOS.
 
-## [0.0.4] - Исправление подключения
+## [0.0.4] - Connection Fix
 
--   Исправлен баг с тем, что подключение не всегда происходило с первого раза на Windows.
+-   Fixed bug where connection didn't always work on the first try on Windows.
 
-## [0.0.5] - Уменьшение размера
+## [0.0.5] - Size Reduction
 
--   Вес расширения уменьшен до 100 килобайт.
+-   Extension size reduced to 100 kilobytes.
 
-## [0.0.6] - Обработка ошибок
+## [0.0.6] - Error Handling
 
--   Теперь если при подключении по SSH выбран публичный ключ вместо приватного, то будет предупрждение.
+-   Now shows warning if public key is selected instead of private key when connecting via SSH.
 
-## [0.0.7] - Группировка серверов
+## [0.0.7] - Server Grouping
 
--   Добавлена возможность создания групп серверов;
--   Добавлено контекстное меню для управления группами;
--   Добавлена возможность перемещения серверов между группами;
--   Возможность добавлять серверы непосредственно в группу.
+-   Added ability to create server groups;
+-   Added context menu for group management;
+-   Added ability to move servers between groups;
+-   Ability to add servers directly to a group.
 
-## [0.0.8] - Уменьшение размера
+## [0.0.8] - Size Reduction
 
--   Размер расширения уменьшен
+-   Extension size reduced
 
-## [0.1.0] - Улучшение процесса добавления серверов и групп
+## [0.1.0] - Improved Server and Group Creation Process
 
--   **ВАЖНО**: Заменён процесс добавления и редактирования серверов с последовательных диалогов на webview-формы;
--   Исправлена проблема потери данных при переключении между окнами во время заполнения формы;
--   Теперь можно безопасно копировать пароли из других приложений, не теряя введённые данные;
--   Добавлена валидация полей формы с отображением ошибок;
--   Все поля формы видны одновременно для удобства заполнения;
--   Автосохранение состояния формы при вводе;
--   Улучшен пользовательский интерфейс с использованием стилей VS Code;
--   Аналогичные улучшения применены к формам создания и редактирования групп;
--   Обновлён ввод пароля при подключении к серверу в Windows PowerShell.
+-   **IMPORTANT**: Replaced sequential dialog-based server creation/editing with webview forms;
+-   Fixed data loss issue when switching between windows during form filling;
+-   Now you can safely copy passwords from other applications without losing entered data;
+-   Added form field validation with error display;
+-   All form fields are visible simultaneously for convenient filling;
+-   Auto-save form state during input;
+-   Improved user interface using VS Code styles;
+-   Similar improvements applied to group creation and editing forms;
+-   Updated password input when connecting to server in Windows PowerShell.
