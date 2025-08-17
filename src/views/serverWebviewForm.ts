@@ -315,8 +315,8 @@ export class ServerWebviewForm {
 
         .icon-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
-            gap: 5px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
             margin-top: 10px;
             max-height: 120px;
             overflow-y: auto;
@@ -329,11 +329,17 @@ export class ServerWebviewForm {
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 8px;
+            justify-content: center;
+            padding: 12px 4px;
             border: 1px solid transparent;
             border-radius: 3px;
             cursor: pointer;
-            font-size: 11px;
+            font-size: 10px;
+            text-align: center;
+            min-width: 60px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .icon-option:hover {
@@ -422,7 +428,7 @@ export class ServerWebviewForm {
             </div>
 
             <div class="form-group">
-                <label>Иконка сервера</label>
+                <label>${this.localization.localize('form.serverIcon', 'Server Icon')}</label>
                 <div class="icon-grid">
                     ${this.getIconOptions(existingServer?.icon)}
                 </div>
@@ -430,7 +436,7 @@ export class ServerWebviewForm {
             </div>
 
             <div class="form-group">
-                <label>Цвет сервера</label>
+                <label>${this.localization.localize('form.serverColor', 'Server Color')}</label>
                 <div class="color-grid">
                     ${this.getColorOptions(existingServer?.color)}
                 </div>
@@ -689,30 +695,53 @@ export class ServerWebviewForm {
 
     private getIconOptions(selectedIcon?: string): string {
         const serverIcons = [
-            { id: 'server', name: 'Сервер' },
-            { id: 'vm', name: 'ВМ' },
-            { id: 'database', name: 'БД' },
-            { id: 'cloud', name: 'Облако' },
-            { id: 'desktop', name: 'Рабочий стол' },
-            { id: 'server-environment', name: 'Среда' },
-            { id: 'server-process', name: 'Процесс' },
-            { id: 'terminal', name: 'Терминал' },
-            { id: 'gear', name: 'Настройки' },
-            { id: 'lock', name: 'Безопасность' },
-            { id: 'globe', name: 'Веб' },
-            { id: 'package', name: 'Пакет' },
-            { id: 'circuit-board', name: 'Железо' },
-            { id: 'rocket', name: 'Запуск' },
-            { id: 'symbol-misc', name: 'Разное' },
-            { id: 'home', name: 'Дом' }
+            { id: 'server', name: this.localization.localize('icon.server', 'Server') },
+            { id: 'vm', name: this.localization.localize('icon.vm', 'VM') },
+            { id: 'database', name: this.localization.localize('icon.database', 'Database') },
+            { id: 'cloud', name: this.localization.localize('icon.cloud', 'Cloud') },
+            { id: 'desktop', name: this.localization.localize('icon.desktop', 'Desktop') },
+            { id: 'server-environment', name: this.localization.localize('icon.environment', 'Environment') },
+            { id: 'server-process', name: this.localization.localize('icon.process', 'Process') },
+            { id: 'terminal', name: this.localization.localize('icon.terminal', 'Terminal') },
+            { id: 'gear', name: this.localization.localize('icon.gear', 'Settings') },
+            { id: 'lock', name: this.localization.localize('icon.lock', 'Security') },
+            { id: 'globe', name: this.localization.localize('icon.globe', 'Web') },
+            { id: 'package', name: this.localization.localize('icon.package', 'Package') },
+            { id: 'circuit-board', name: this.localization.localize('icon.circuit', 'Hardware') },
+            { id: 'rocket', name: this.localization.localize('icon.rocket', 'Launch') },
+            { id: 'symbol-misc', name: this.localization.localize('icon.misc', 'Other') },
+            { id: 'home', name: this.localization.localize('icon.home', 'Home') }
         ];
 
-        return serverIcons.map(icon =>
-            `<div class="icon-option ${selectedIcon === icon.id ? 'selected' : ''}" data-icon="${icon.id}">
-                <div style="font-size: 16px;">$(${icon.id})</div>
+        return serverIcons.map(icon => {
+            const iconSymbol = this.getIconSymbol(icon.id);
+            return `<div class="icon-option ${selectedIcon === icon.id ? 'selected' : ''}" data-icon="${icon.id}">
+                <div style="font-size: 16px;">${iconSymbol}</div>
                 <div>${icon.name}</div>
-            </div>`
-        ).join('');
+            </div>`;
+        }).join('');
+    }
+
+    private getIconSymbol(iconId: string): string {
+        const iconMap: Record<string, string> = {
+            'server': '🖥️',
+            'vm': '🖥️',
+            'database': '🗄️',
+            'cloud': '☁️',
+            'desktop': '🖥️',
+            'server-environment': '🌐',
+            'server-process': '⚙️',
+            'terminal': '📟',
+            'gear': '⚙️',
+            'lock': '🔒',
+            'globe': '🌐',
+            'package': '📦',
+            'circuit-board': '🔧',
+            'rocket': '🚀',
+            'symbol-misc': '🔗',
+            'home': '🏠'
+        };
+        return iconMap[iconId] || '🖥️';
     }
 
     private getColorOptions(selectedColor?: string): string {

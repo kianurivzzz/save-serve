@@ -9,5 +9,9 @@
     "command.editGroup": "Edit Group",
     "command.deleteGroup": "Delete Group",
     "command.donate": "Support me",
-    "view.servers": "Servers"
+    "view.servers": "Servers",
+    "command.quickConnect": "Quick Connect",
+    "command.duplicateServer": "Duplicate Server",
+    "command.exportServer": "Export Settings",
+    "command.moveToGroup": "Move to Group"
 }

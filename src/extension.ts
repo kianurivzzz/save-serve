@@ -214,13 +214,19 @@ export function activate(context: vscode.ExtensionContext) {
 				return;
 			}
 
+			// Получаем группы заранее
+			const groups = await serverService.getGroups();
+
 			// Создаем список для QuickPick
-			const serverItems = servers.map(server => ({
-				label: `$(server) ${server.name}`,
-				description: `${server.username}@${server.host}:${server.port}`,
-				detail: server.groupId ? `Группа: ${serverService.getGroups().then(groups => groups.find(g => g.id === server.groupId)?.name || 'Неизвестно')}` : 'Без группы',
-				server: server
-			}));
+			const serverItems = servers.map(server => {
+				const group = server.groupId ? groups.find(g => g.id === server.groupId) : null;
+				return {
+					label: `$(server) ${server.name}`,
+					description: `${server.username}@${server.host}:${server.port}`,
+					detail: group ? `Группа: ${group.name}` : 'Без группы',
+					server: server
+				};
+			});
 
 			const selectedItem = await vscode.window.showQuickPick(serverItems, {
 				placeHolder: localization.localize('quickConnect.selectServer'),

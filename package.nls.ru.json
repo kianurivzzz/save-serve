@@ -9,5 +9,9 @@
     "command.editGroup": "Редактировать группу",
     "command.deleteGroup": "Удалить группу",
     "command.donate": "Поддержи меня",
-    "view.servers": "Серверы"
+    "view.servers": "Серверы",
+    "command.quickConnect": "Быстрое подключение",
+    "command.duplicateServer": "Дублировать сервер",
+    "command.exportServer": "Экспорт настроек",
+    "command.moveToGroup": "Переместить в группу"
 }

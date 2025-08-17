@@ -230,8 +230,8 @@ export class GroupWebviewForm {
 
         .icon-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
-            gap: 5px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
             margin-top: 10px;
             max-height: 120px;
             overflow-y: auto;
@@ -244,11 +244,17 @@ export class GroupWebviewForm {
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 8px;
+            justify-content: center;
+            padding: 12px 4px;
             border: 1px solid transparent;
             border-radius: 3px;
             cursor: pointer;
-            font-size: 11px;
+            font-size: 10px;
+            text-align: center;
+            min-width: 60px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .icon-option:hover {
@@ -302,7 +308,7 @@ export class GroupWebviewForm {
             </div>
 
             <div class="form-group">
-                <label>Иконка группы</label>
+                <label>${this.localization.localize('form.groupIcon', 'Group Icon')}</label>
                 <div class="icon-grid">
                     ${this.getGroupIconOptions(existingGroup?.icon)}
                 </div>
@@ -310,7 +316,7 @@ export class GroupWebviewForm {
             </div>
 
             <div class="form-group">
-                <label>Цвет группы</label>
+                <label>${this.localization.localize('form.groupColor', 'Group Color')}</label>
                 <div class="color-grid">
                     ${this.getColorOptions(existingGroup?.color)}
                 </div>
@@ -423,26 +429,45 @@ export class GroupWebviewForm {
 
     private getGroupIconOptions(selectedIcon?: string): string {
         const groupIcons = [
-            { id: 'folder', name: 'Папка' },
-            { id: 'folder-opened', name: 'Открытая папка' },
-            { id: 'organization', name: 'Организация' },
-            { id: 'package', name: 'Пакет' },
-            { id: 'tag', name: 'Тег' },
-            { id: 'workspace', name: 'Рабочая область' },
-            { id: 'project', name: 'Проект' },
-            { id: 'symbol-namespace', name: 'Пространство имён' },
-            { id: 'symbol-misc', name: 'Разное' },
-            { id: 'layers', name: 'Слои' },
-            { id: 'group-by-ref-type', name: 'Группировка' },
-            { id: 'archive', name: 'Архив' }
+            { id: 'folder', name: this.localization.localize('icon.folder', 'Folder') },
+            { id: 'folder-opened', name: this.localization.localize('icon.folderOpened', 'Opened Folder') },
+            { id: 'organization', name: this.localization.localize('icon.organization', 'Organization') },
+            { id: 'package', name: this.localization.localize('icon.package', 'Package') },
+            { id: 'tag', name: this.localization.localize('icon.tag', 'Tag') },
+            { id: 'workspace', name: this.localization.localize('icon.workspace', 'Workspace') },
+            { id: 'project', name: this.localization.localize('icon.project', 'Project') },
+            { id: 'symbol-namespace', name: this.localization.localize('icon.namespace', 'Namespace') },
+            { id: 'symbol-misc', name: this.localization.localize('icon.misc', 'Other') },
+            { id: 'layers', name: this.localization.localize('icon.layers', 'Layers') },
+            { id: 'group-by-ref-type', name: this.localization.localize('icon.grouping', 'Grouping') },
+            { id: 'archive', name: this.localization.localize('icon.archive', 'Archive') }
         ];
 
-        return groupIcons.map(icon =>
-            `<div class="icon-option ${selectedIcon === icon.id ? 'selected' : ''}" data-icon="${icon.id}">
-                <div style="font-size: 16px;">$(${icon.id})</div>
+        return groupIcons.map(icon => {
+            const iconSymbol = this.getGroupIconSymbol(icon.id);
+            return `<div class="icon-option ${selectedIcon === icon.id ? 'selected' : ''}" data-icon="${icon.id}">
+                <div style="font-size: 16px;">${iconSymbol}</div>
                 <div>${icon.name}</div>
-            </div>`
-        ).join('');
+            </div>`;
+        }).join('');
+    }
+
+    private getGroupIconSymbol(iconId: string): string {
+        const iconMap: Record<string, string> = {
+            'folder': '📁',
+            'folder-opened': '📂',
+            'organization': '🏢',
+            'package': '📦',
+            'tag': '🏷️',
+            'workspace': '💼',
+            'project': '📋',
+            'symbol-namespace': '📚',
+            'symbol-misc': '🔗',
+            'layers': '📑',
+            'group-by-ref-type': '📊',
+            'archive': '🗃️'
+        };
+        return iconMap[iconId] || '📁';
     }
 
     private getColorOptions(selectedColor?: string): string {
