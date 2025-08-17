@@ -4,19 +4,23 @@
 
 Save Serve is a Visual Studio Code extension that allows you to save server data and instantly connect to them via SSH without leaving your code editor.
 
-![Version](https://img.shields.io/badge/version-0.1.0-blue)
+![Version](https://img.shields.io/badge/version-1.0.0-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
 ## ✨ Features
 
--   🔒 **Security** – server data stored in encrypted form
--   🔑 **Flexible authentication** – support for passwords and SSH keys
--   🖱️ **Quick connection** – access servers with a single click
--   🧠 **Intuitive interface** – convenient server management with modern forms
--   ⚡ **Time saving** – forget about manual SSH command input
--   📁 **Server groups** – organize servers into custom groups
--   💾 **Persistent forms** – no data loss when switching between windows during form filling
--   ✅ **Form validation** – real-time validation with error display
+- 🔒 **Security** – server data gets encrypted storage
+- 🔑 **Multiple auth methods** – works with passwords and SSH keys
+- 🖱️ **One-click connect** – connect to servers with single click
+- 🧠 **Simple interface** – manage servers with clear forms
+- ⚡ **Fast setup** – skip manual SSH commands
+- 📁 **Server groups** – organize servers into custom groups
+- 💾 **Persistent forms** – no data loss when switching windows
+- ✅ **Form validation** – shows errors in real time
+- 🎨 **Custom icons** – pick from many icons for servers and groups
+- 🌈 **Color coding** – mark servers with colors
+- ⚡ **Keyboard shortcuts** – use hotkeys for quick actions
+- 🚀 **Quick connect** – search and connect to servers fast
 
 ## 🛠️ Installation
 
@@ -34,14 +38,14 @@ Or just find "Save Serve" in the VS Code marketplace.
 1. Click on the Save Serve icon in the left sidebar;
 2. Click the + button to add a new server;
 3. Fill in the server information:
-    - **Server name** - A meaningful name for display in the list
-    - **Host** - IP address or domain
-    - **Port** - Default is 22
-    - **Username** - Login for connection
-    - **Group** - Optional group to organize servers (you can create new groups here)
-    - **Authentication method**:
-        - 🔑 **By password** - Enter and save password
-        - 🔐 **By SSH key** - Select key file and key password if any
+   - **Server name** - A meaningful name for display in the list
+   - **Host** - IP address or domain
+   - **Port** - Default is 22
+   - **Username** - Login for connection
+   - **Group** - Optional group to organize servers (you can create new groups here)
+   - **Authentication method**:
+     - 🔑 **By password** - Enter and save password
+     - 🔐 **By SSH key** - Select key file and key password if any
 
 ### Managing groups
 
@@ -58,9 +62,9 @@ Simply click on a server in the list – and VS Code will instantly open a termi
 
 Save Serve uses VS Code's built-in secure storage:
 
--   **Windows**: Windows Credential Manager;
--   **macOS**: Keychain;
--   **Linux**: libsecret.
+- **Windows**: Windows Credential Manager;
+- **macOS**: Keychain;
+- **Linux**: libsecret.
 
 All credentials are securely encrypted and never shared with third parties.
 
@@ -68,16 +72,20 @@ All credentials are securely encrypted and never shared with third parties.
 
 Use the command palette F1 or Ctrl+Shift+P:
 
-| Command                           | Description               |
-| --------------------------------- | ------------------------- |
-| `Save Serve: Add server`          | Create a new server entry |
-| `Save Serve: Edit server`         | Change server settings    |
-| `Save Serve: Delete server`       | Delete server entry       |
-| `Save Serve: Connect to server`   | Open SSH connection       |
-| `Save Serve: Refresh server list` | Update panel              |
-| `Save Serve: Add group`           | Create a new server group |
-| `Save Serve: Edit group`          | Change group settings     |
-| `Save Serve: Delete group`        | Delete group              |
+| Command                           | Description                     |
+| --------------------------------- | ------------------------------- |
+| `Save Serve: Add server`          | Create a new server entry       |
+| `Save Serve: Edit server`         | Change server settings          |
+| `Save Serve: Delete server`       | Delete server entry             |
+| `Save Serve: Connect to server`   | Open SSH connection             |
+| `Save Serve: Refresh server list` | Update panel                    |
+| `Save Serve: Add group`           | Create a new server group       |
+| `Save Serve: Edit group`          | Change group settings           |
+| `Save Serve: Delete group`        | Delete group                    |
+| `Save Serve: Quick Connect`       | Quick server search and connect |
+| `Save Serve: Duplicate Server`    | Create a copy of server         |
+| `Save Serve: Export Settings`     | Export server to JSON           |
+| `Save Serve: Move to Group`       | Move server to another group    |
 
 ## 🐛 Report an issue
 
@@ -95,19 +103,23 @@ Found a bug or have a suggestion for improvement? Create an [issue](https://gith
 
 Save Serve — это расширение для Visual Studio Code, которое позволяет сохранять данные серверов и мгновенно подключаться к ним через SSH, не выходя из редактора кода.
 
-![Версия](https://img.shields.io/badge/version-0.1.0-blue)
+![Версия](https://img.shields.io/badge/version-1.0.0-blue)
 ![Лицензия](https://img.shields.io/badge/license-MIT-green)
 
 ## ✨ Возможности
 
--   🔒 **Безопасность** – данные серверов хранятся в зашифрованном виде
--   🔑 **Гибкая аутентификация** – поддержка паролей и SSH-ключей
--   🖱️ **Быстрое подключение** – доступ к серверам в один клик
--   🧠 **Интуитивный интерфейс** – удобное управление серверами с современными формами
--   ⚡ **Экономия времени** – забудь о ручном вводе команд
--   📁 **Группы серверов** – организуй серверы в удобные группы
--   💾 **Сохранение состояния** – никакой потери данных при переключении между окнами
--   ✅ **Валидация форм** – проверка данных в реальном времени с отображением ошибок
+- 🔒 **Безопасность** – данные серверов хранятся в зашифрованном виде
+- 🔑 **Разные способы входа** – работает с паролями и SSH-ключами
+- 🖱️ **Быстрое подключение** – доступ к серверам в один клик
+- 🧠 **Простой интерфейс** – удобные формы для управления серверами
+- ⚡ **Экономия времени** – забудь о ручном вводе команд
+- 📁 **Группы серверов** – организуй серверы в удобные группы
+- 💾 **Сохранение состояния** – никакой потери данных при переключении окон
+- ✅ **Валидация форм** – показывает ошибки в реальном времени
+- 🎨 **Кастомные иконки** – выбирай из множества иконок для серверов и групп
+- 🌈 **Цветовое кодирование** – отмечай серверы цветами
+- ⚡ **Горячие клавиши** – используй сочетания клавиш для быстрых действий
+- 🚀 **Быстрое подключение** – ищи и подключайся к серверам быстро
 
 ## 🛠️ Установка
 
@@ -125,14 +137,14 @@ Save Serve — это расширение для Visual Studio Code, котор
 1. Нажми на иконку Save Serve в левом сайдбаре;
 2. Нажми на кнопку + чтобы добавить новый сервер;
 3. Заполни информацию о сервере:
-    - **Имя сервера** – понятное название для отображения в списке
-    - **Хост** – IP-адрес или домен
-    - **Порт** – по умолчанию 22
-    - **Имя пользователя** – логин для подключения
-    - **Группа** – опциональная группа для организации серверов (можно создать новую)
-    - **Способ аутентификации**:
-        - 🔑 **По паролю** – введи и сохрани пароль
-        - 🔐 **По SSH-ключу** – выбери файл ключа и пароль от ключа, если есть
+   - **Имя сервера** – понятное название для отображения в списке
+   - **Хост** – IP-адрес или домен
+   - **Порт** – по умолчанию 22
+   - **Имя пользователя** – логин для подключения
+   - **Группа** – опциональная группа для организации серверов (можно создать новую)
+   - **Способ аутентификации**:
+     - 🔑 **По паролю** – введи и сохрани пароль
+     - 🔐 **По SSH-ключу** – выбери файл ключа и пароль от ключа, если есть
 
 ### Управление группами
 
@@ -149,9 +161,9 @@ Save Serve — это расширение для Visual Studio Code, котор
 
 Save Serve использует встроенное в VS Code защищённое хранилище:
 
--   **Windows**: Windows Credential Manager;
--   **macOS**: Keychain;
--   **Linux**: libsecret.
+- **Windows**: Windows Credential Manager;
+- **macOS**: Keychain;
+- **Linux**: libsecret.
 
 Все учётные данные надёжно шифруются и никогда не передаются третьим лицам.
 
@@ -169,6 +181,10 @@ Save Serve использует встроенное в VS Code защищённ
 | `Save Serve: Добавить группу`          | Создать новую группу серверов  |
 | `Save Serve: Редактировать группу`     | Изменить настройки группы      |
 | `Save Serve: Удалить группу`           | Удалить группу                 |
+| `Save Serve: Быстрое подключение`      | Быстрый поиск и подключение    |
+| `Save Serve: Дублировать сервер`       | Создать копию сервера          |
+| `Save Serve: Экспорт настроек`         | Экспорт сервера в JSON         |
+| `Save Serve: Переместить в группу`     | Переместить сервер в группу    |
 
 ## 🐛 Сообщить о проблеме
 

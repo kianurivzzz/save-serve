@@ -202,6 +202,148 @@ export function activate(context: vscode.ExtensionContext) {
 					vscode.env.openExternal(vscode.Uri.parse(url));
 				}
 			}
+		}),
+
+		// Команда быстрого подключения
+		vscode.commands.registerCommand('save-serve.quickConnect', async () => {
+			console.log('Запущена команда быстрого подключения');
+
+			const servers = await serverService.getServers();
+			if (servers.length === 0) {
+				vscode.window.showInformationMessage(localization.localize('info.noServers'));
+				return;
+			}
+
+			// Создаем список для QuickPick
+			const serverItems = servers.map(server => ({
+				label: `$(server) ${server.name}`,
+				description: `${server.username}@${server.host}:${server.port}`,
+				detail: server.groupId ? `Группа: ${serverService.getGroups().then(groups => groups.find(g => g.id === server.groupId)?.name || 'Неизвестно')}` : 'Без группы',
+				server: server
+			}));
+
+			const selectedItem = await vscode.window.showQuickPick(serverItems, {
+				placeHolder: localization.localize('quickConnect.selectServer'),
+				matchOnDescription: true,
+				matchOnDetail: true
+			});
+
+			if (selectedItem) {
+				try {
+					await sshService.connectToServer(selectedItem.server);
+					vscode.window.showInformationMessage(
+						localization.localize('info.connectionSuccess', selectedItem.server.name, selectedItem.server.username, selectedItem.server.host)
+					);
+				} catch (error) {
+					console.error('Ошибка при подключении:', error);
+					vscode.window.showErrorMessage(
+						localization.localize('error.connectionError', error instanceof Error ? error.message : String(error))
+					);
+				}
+			}
+		}),
+
+		// Команда дублирования сервера
+		vscode.commands.registerCommand('save-serve.duplicateServer', async (item: ServerTreeItem) => {
+			console.log('Запущена команда дублирования сервера');
+			if (!item || !item.server) {
+				vscode.window.showErrorMessage('Не удалось продублировать сервер: сервер не найден');
+				return;
+			}
+
+			const originalServer = item.server;
+			const duplicatedServerData = {
+				...originalServer,
+				name: `${originalServer.name} (копия)`,
+				id: undefined // id будет сгенерирован автоматически
+			};
+
+			try {
+				await serverService.addServer(duplicatedServerData);
+				serverTreeProvider.refresh();
+				vscode.window.showInformationMessage(`Сервер "${originalServer.name}" успешно продублирован`);
+			} catch (error) {
+				console.error('Ошибка при дублировании сервера:', error);
+				vscode.window.showErrorMessage(`Ошибка при дублировании сервера: ${error instanceof Error ? error.message : String(error)}`);
+			}
+		}),
+
+		// Команда экспорта сервера
+		vscode.commands.registerCommand('save-serve.exportServer', async (item: ServerTreeItem) => {
+			console.log('Запущена команда экспорта сервера');
+			if (!item || !item.server) {
+				vscode.window.showErrorMessage('Не удалось экспортировать сервер: сервер не найден');
+				return;
+			}
+
+			const server = item.server;
+			const exportData = {
+				name: server.name,
+				host: server.host,
+				port: server.port,
+				username: server.username,
+				usePrivateKey: server.usePrivateKey,
+				privateKeyPath: server.privateKeyPath,
+				icon: server.icon,
+				color: server.color,
+				groupId: server.groupId
+				// Исключаем пароли для безопасности
+			};
+
+			const jsonString = JSON.stringify(exportData, null, 2);
+
+			try {
+				await vscode.env.clipboard.writeText(jsonString);
+				vscode.window.showInformationMessage(`Конфигурация сервера "${server.name}" скопирована в буфер обмена`);
+			} catch (error) {
+				console.error('Ошибка при экспорте сервера:', error);
+				vscode.window.showErrorMessage(`Ошибка при экспорте сервера: ${error instanceof Error ? error.message : String(error)}`);
+			}
+		}),
+
+		// Команда перемещения сервера в другую группу
+		vscode.commands.registerCommand('save-serve.moveToGroup', async (item: ServerTreeItem) => {
+			console.log('Запущена команда перемещения сервера в группу');
+			if (!item || !item.server) {
+				vscode.window.showErrorMessage('Не удалось переместить сервер: сервер не найден');
+				return;
+			}
+
+			const server = item.server;
+			const groups = await serverService.getGroups();
+
+			// Создаем список групп для выбора
+			const groupItems = [
+				{
+					label: '$(folder-opened) Без группы',
+					description: 'Убрать сервер из группы',
+					groupId: undefined
+				},
+				...groups.map(group => ({
+					label: `$(folder) ${group.name}`,
+					description: group.description || '',
+					groupId: group.id
+				}))
+			];
+
+			const selectedItem = await vscode.window.showQuickPick(groupItems, {
+				placeHolder: `Выберите группу для сервера "${server.name}"`,
+				matchOnDescription: true
+			});
+
+			if (selectedItem) {
+				try {
+					await serverService.moveServerToGroup(server.id, selectedItem.groupId);
+					serverTreeProvider.refresh();
+					const groupName = selectedItem.groupId ?
+						groups.find(g => g.id === selectedItem.groupId)?.name || 'Неизвестная группа' :
+						'Без группы';
+					vscode.window.showInformationMessage(`Сервер "${server.name}" перемещен в: ${groupName}`);
+				} catch (error) {
+					console.error('Ошибка при перемещении сервера:', error);
+					vscode.window.showErrorMessage(`Ошибка при перемещении сервера: ${error instanceof Error ? error.message : String(error)}`);
+				}
+			}
 		})
 	);
 

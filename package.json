@@ -2,7 +2,7 @@
   "name": "save-serve",
   "displayName": "Save Serve",
   "description": "Save accesses to your servers in a couple mouse clicks, then quickly connect to them. Right in your favorite code editor. Easy and secure. Use Save Serve for free!",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "publisher": "nkarasyov",
   "engines": {
     "vscode": "^1.80.0"
@@ -77,6 +77,26 @@
         "command": "save-serve.donate",
         "title": "%command.donate%",
         "icon": "$(heart)"
+      },
+      {
+        "command": "save-serve.quickConnect",
+        "title": "%command.quickConnect%",
+        "icon": "$(search)"
+      },
+      {
+        "command": "save-serve.duplicateServer",
+        "title": "%command.duplicateServer%",
+        "icon": "$(copy)"
+      },
+      {
+        "command": "save-serve.exportServer",
+        "title": "%command.exportServer%",
+        "icon": "$(export)"
+      },
+      {
+        "command": "save-serve.moveToGroup",
+        "title": "%command.moveToGroup%",
+        "icon": "$(move)"
       }
     ],
     "menus": {
@@ -105,6 +125,11 @@
           "command": "save-serve.donate",
           "when": "view == saveServeServers",
           "group": "navigation"
+        },
+        {
+          "command": "save-serve.quickConnect",
+          "when": "view == saveServeServers",
+          "group": "navigation"
         }
       ],
       "view/item/context": [
@@ -122,6 +147,21 @@
           "command": "save-serve.deleteServer",
           "when": "view == saveServeServers && viewItem == server",
           "group": "inline"
+        },
+        {
+          "command": "save-serve.duplicateServer",
+          "when": "view == saveServeServers && viewItem == server",
+          "group": "1_actions"
+        },
+        {
+          "command": "save-serve.exportServer",
+          "when": "view == saveServeServers && viewItem == server",
+          "group": "1_actions"
+        },
+        {
+          "command": "save-serve.moveToGroup",
+          "when": "view == saveServeServers && viewItem == server",
+          "group": "1_actions"
         },
         {
           "command": "save-serve.editGroup",
@@ -174,7 +214,32 @@
           "description": "Language used in the extension"
         }
       }
-    }
+    },
+    "keybindings": [
+      {
+        "command": "save-serve.addServer",
+        "key": "ctrl+alt+s",
+        "mac": "cmd+alt+s",
+        "when": "view == saveServeServers"
+      },
+      {
+        "command": "save-serve.quickConnect",
+        "key": "ctrl+alt+c",
+        "mac": "cmd+alt+c"
+      },
+      {
+        "command": "save-serve.addGroup",
+        "key": "ctrl+alt+g",
+        "mac": "cmd+alt+g",
+        "when": "view == saveServeServers"
+      },
+      {
+        "command": "save-serve.refreshServers",
+        "key": "ctrl+alt+r",
+        "mac": "cmd+alt+r",
+        "when": "view == saveServeServers"
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run package",

@@ -118,5 +118,11 @@
   "form.groupDescriptionPlaceholder": "Введите описание группы (необязательно)",
   "button.add": "Добавить",
   "button.update": "Обновить",
-  "button.cancel": "Отмена"
+  "button.cancel": "Отмена",
+  "command.quickConnect": "Быстрое подключение",
+  "quickConnect.selectServer": "Выберите сервер для подключения",
+  "info.noServers": "Нет доступных серверов для подключения",
+  "command.duplicateServer": "Дублировать сервер",
+  "command.exportServer": "Экспорт настроек",
+  "command.moveToGroup": "Переместить в группу"
 }

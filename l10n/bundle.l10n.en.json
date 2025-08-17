@@ -106,5 +106,11 @@
   "service.deleteNotFound": "Server with id {0} not found",
   "treeitem.created": "Server item created",
   "group.ungrouped": "Ungrouped",
-  "donate.chooseDonationService": "Choose donation service"
+  "donate.chooseDonationService": "Choose donation service",
+  "command.quickConnect": "Quick Connect",
+  "quickConnect.selectServer": "Select a server to connect",
+  "info.noServers": "No servers available for connection",
+  "command.duplicateServer": "Duplicate Server",
+  "command.exportServer": "Export Settings",
+  "command.moveToGroup": "Move to Group"
 }

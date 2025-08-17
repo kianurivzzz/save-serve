@@ -9,10 +9,14 @@ export interface Server {
     privateKeyPath?: string;
     privateKeyPassword?: string;
     groupId?: string;
+    icon?: string; // VS Code ThemeIcon ID для кастомизации иконки
+    color?: string; // Цвет для группировки/выделения
 }
 
 export interface ServerGroup {
     id: string;
     name: string;
     description?: string;
+    icon?: string; // VS Code ThemeIcon ID для кастомизации иконки группы
+    color?: string; // Цвет группы для визуального выделения
 }

@@ -146,7 +146,9 @@ export class ServerWebviewForm {
             groupId: data.groupId === 'none' ? undefined : data.groupId,
             password: data.usePrivateKey === 'true' ? undefined : data.password,
             privateKeyPath: data.usePrivateKey === 'true' ? data.privateKeyPath : undefined,
-            privateKeyPassword: data.usePrivateKey === 'true' ? data.privateKeyPassword : undefined
+            privateKeyPassword: data.usePrivateKey === 'true' ? data.privateKeyPassword : undefined,
+            icon: data.serverIcon || 'server',
+            color: data.serverColor || undefined
         };
 
         if (existingServer) {
@@ -310,6 +312,62 @@ export class ServerWebviewForm {
         .required {
             color: var(--vscode-errorForeground);
         }
+
+        .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
+            gap: 5px;
+            margin-top: 10px;
+            max-height: 120px;
+            overflow-y: auto;
+            border: 1px solid var(--vscode-input-border);
+            border-radius: 3px;
+            padding: 10px;
+        }
+
+        .icon-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px;
+            border: 1px solid transparent;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 11px;
+        }
+
+        .icon-option:hover {
+            background-color: var(--vscode-list-hoverBackground);
+        }
+
+        .icon-option.selected {
+            border-color: var(--vscode-focusBorder);
+            background-color: var(--vscode-list-activeSelectionBackground);
+        }
+
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .color-option {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .color-option:hover {
+            border-color: var(--vscode-focusBorder);
+        }
+
+        .color-option.selected {
+            border-color: var(--vscode-focusBorder);
+            box-shadow: 0 0 0 2px var(--vscode-focusBorder);
+        }
     </style>
 </head>
 <body>
@@ -361,6 +419,22 @@ export class ServerWebviewForm {
                         <textarea id="newGroupDescription" name="newGroupDescription" rows="2"></textarea>
                     </div>
                 </div>
+            </div>
+
+            <div class="form-group">
+                <label>Иконка сервера</label>
+                <div class="icon-grid">
+                    ${this.getIconOptions(existingServer?.icon)}
+                </div>
+                <input type="hidden" id="serverIcon" name="serverIcon" value="${existingServer?.icon || 'server'}">
+            </div>
+
+            <div class="form-group">
+                <label>Цвет сервера</label>
+                <div class="color-grid">
+                    ${this.getColorOptions(existingServer?.color)}
+                </div>
+                <input type="hidden" id="serverColor" name="serverColor" value="${existingServer?.color || ''}">
             </div>
 
             <div class="form-group">
@@ -587,12 +661,79 @@ export class ServerWebviewForm {
                 usePrivateKey.dispatchEvent(new Event('change'));
             }
 
+            // Обработка выбора иконок
+            document.querySelectorAll('.icon-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.icon-option').forEach(o => o.classList.remove('selected'));
+                    this.classList.add('selected');
+                    document.getElementById('serverIcon').value = this.dataset.icon;
+                });
+            });
+
+            // Обработка выбора цветов
+            document.querySelectorAll('.color-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.color-option').forEach(o => o.classList.remove('selected'));
+                    this.classList.add('selected');
+                    document.getElementById('serverColor').value = this.dataset.color;
+                });
+            });
+
             const groupId = document.getElementById('groupId');
             groupId.dispatchEvent(new Event('change'));
         });
     </script>
 </body>
 </html>`;
+    }
+
+    private getIconOptions(selectedIcon?: string): string {
+        const serverIcons = [
+            { id: 'server', name: 'Сервер' },
+            { id: 'vm', name: 'ВМ' },
+            { id: 'database', name: 'БД' },
+            { id: 'cloud', name: 'Облако' },
+            { id: 'desktop', name: 'Рабочий стол' },
+            { id: 'server-environment', name: 'Среда' },
+            { id: 'server-process', name: 'Процесс' },
+            { id: 'terminal', name: 'Терминал' },
+            { id: 'gear', name: 'Настройки' },
+            { id: 'lock', name: 'Безопасность' },
+            { id: 'globe', name: 'Веб' },
+            { id: 'package', name: 'Пакет' },
+            { id: 'circuit-board', name: 'Железо' },
+            { id: 'rocket', name: 'Запуск' },
+            { id: 'symbol-misc', name: 'Разное' },
+            { id: 'home', name: 'Дом' }
+        ];
+
+        return serverIcons.map(icon =>
+            `<div class="icon-option ${selectedIcon === icon.id ? 'selected' : ''}" data-icon="${icon.id}">
+                <div style="font-size: 16px;">$(${icon.id})</div>
+                <div>${icon.name}</div>
+            </div>`
+        ).join('');
+    }
+
+    private getColorOptions(selectedColor?: string): string {
+        const colors = [
+            { id: '', color: 'transparent', name: 'По умолчанию' },
+            { id: 'charts.red', color: '#ff6b6b', name: 'Красный' },
+            { id: 'charts.orange', color: '#ffa726', name: 'Оранжевый' },
+            { id: 'charts.yellow', color: '#ffeb3b', name: 'Жёлтый' },
+            { id: 'charts.green', color: '#4caf50', name: 'Зелёный' },
+            { id: 'charts.blue', color: '#2196f3', name: 'Синий' },
+            { id: 'charts.purple', color: '#9c27b0', name: 'Фиолетовый' },
+            { id: 'charts.pink', color: '#e91e63', name: 'Розовый' }
+        ];
+
+        return colors.map(color =>
+            `<div class="color-option ${selectedColor === color.id ? 'selected' : ''}"
+                  data-color="${color.id}"
+                  style="background-color: ${color.color};"
+                  title="${color.name}">
+            </div>`
+        ).join('');
     }
 
     private generateNonce(): string {

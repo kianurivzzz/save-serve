@@ -51,7 +51,7 @@ export class GroupWebviewForm {
             }
 
             this.currentPanel.webview.onDidReceiveMessage(
-                async (message) => {
+                async (message: any) => {
                     switch (message.type) {
                         case 'submit':
                             try {
@@ -99,7 +99,9 @@ export class GroupWebviewForm {
     private async processGroupData(data: any, existingGroup?: ServerGroup): Promise<ServerGroup> {
         const groupData = {
             name: data.name,
-            description: data.description || undefined
+            description: data.description || undefined,
+            icon: data.groupIcon || 'folder',
+            color: data.groupColor || undefined
         };
 
         if (existingGroup) {
@@ -225,6 +227,62 @@ export class GroupWebviewForm {
         .required {
             color: var(--vscode-errorForeground);
         }
+
+        .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
+            gap: 5px;
+            margin-top: 10px;
+            max-height: 120px;
+            overflow-y: auto;
+            border: 1px solid var(--vscode-input-border);
+            border-radius: 3px;
+            padding: 10px;
+        }
+
+        .icon-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px;
+            border: 1px solid transparent;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 11px;
+        }
+
+        .icon-option:hover {
+            background-color: var(--vscode-list-hoverBackground);
+        }
+
+        .icon-option.selected {
+            border-color: var(--vscode-focusBorder);
+            background-color: var(--vscode-list-activeSelectionBackground);
+        }
+
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .color-option {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .color-option:hover {
+            border-color: var(--vscode-focusBorder);
+        }
+
+        .color-option.selected {
+            border-color: var(--vscode-focusBorder);
+            box-shadow: 0 0 0 2px var(--vscode-focusBorder);
+        }
     </style>
 </head>
 <body>
@@ -241,6 +299,22 @@ export class GroupWebviewForm {
             <div class="form-group">
                 <label for="description">${this.localization.localize('form.groupDescription')}</label>
                 <textarea id="description" name="description" rows="3" placeholder="${this.localization.localize('form.groupDescriptionPlaceholder') || 'Введите описание группы (необязательно)'}">${existingGroup?.description || ''}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Иконка группы</label>
+                <div class="icon-grid">
+                    ${this.getGroupIconOptions(existingGroup?.icon)}
+                </div>
+                <input type="hidden" id="groupIcon" name="groupIcon" value="${existingGroup?.icon || 'folder'}">
+            </div>
+
+            <div class="form-group">
+                <label>Цвет группы</label>
+                <div class="color-grid">
+                    ${this.getColorOptions(existingGroup?.color)}
+                </div>
+                <input type="hidden" id="groupColor" name="groupColor" value="${existingGroup?.color || ''}">
             </div>
 
             <div class="button-group">
@@ -302,6 +376,29 @@ export class GroupWebviewForm {
             });
         }
 
+        // Инициализация обработчиков событий для иконок и цветов
+        document.addEventListener('DOMContentLoaded', function() {
+            // Обработка выбора иконок
+            document.querySelectorAll('.icon-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.icon-option').forEach(o => o.classList.remove('selected'));
+                    this.classList.add('selected');
+                    document.getElementById('groupIcon').value = this.dataset.icon;
+                    saveFormState();
+                });
+            });
+
+            // Обработка выбора цветов
+            document.querySelectorAll('.color-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.color-option').forEach(o => o.classList.remove('selected'));
+                    this.classList.add('selected');
+                    document.getElementById('groupColor').value = this.dataset.color;
+                    saveFormState();
+                });
+            });
+        });
+
         function validateForm() {
             let isValid = true;
 
@@ -322,6 +419,51 @@ export class GroupWebviewForm {
     </script>
 </body>
 </html>`;
+    }
+
+    private getGroupIconOptions(selectedIcon?: string): string {
+        const groupIcons = [
+            { id: 'folder', name: 'Папка' },
+            { id: 'folder-opened', name: 'Открытая папка' },
+            { id: 'organization', name: 'Организация' },
+            { id: 'package', name: 'Пакет' },
+            { id: 'tag', name: 'Тег' },
+            { id: 'workspace', name: 'Рабочая область' },
+            { id: 'project', name: 'Проект' },
+            { id: 'symbol-namespace', name: 'Пространство имён' },
+            { id: 'symbol-misc', name: 'Разное' },
+            { id: 'layers', name: 'Слои' },
+            { id: 'group-by-ref-type', name: 'Группировка' },
+            { id: 'archive', name: 'Архив' }
+        ];
+
+        return groupIcons.map(icon =>
+            `<div class="icon-option ${selectedIcon === icon.id ? 'selected' : ''}" data-icon="${icon.id}">
+                <div style="font-size: 16px;">$(${icon.id})</div>
+                <div>${icon.name}</div>
+            </div>`
+        ).join('');
+    }
+
+    private getColorOptions(selectedColor?: string): string {
+        const colors = [
+            { id: '', color: 'transparent', name: 'По умолчанию' },
+            { id: 'charts.red', color: '#ff6b6b', name: 'Красный' },
+            { id: 'charts.orange', color: '#ffa726', name: 'Оранжевый' },
+            { id: 'charts.yellow', color: '#ffeb3b', name: 'Жёлтый' },
+            { id: 'charts.green', color: '#4caf50', name: 'Зелёный' },
+            { id: 'charts.blue', color: '#2196f3', name: 'Синий' },
+            { id: 'charts.purple', color: '#9c27b0', name: 'Фиолетовый' },
+            { id: 'charts.pink', color: '#e91e63', name: 'Розовый' }
+        ];
+
+        return colors.map(color =>
+            `<div class="color-option ${selectedColor === color.id ? 'selected' : ''}"
+                  data-color="${color.id}"
+                  style="background-color: ${color.color};"
+                  title="${color.name}">
+            </div>`
+        ).join('');
     }
 
     private generateNonce(): string {

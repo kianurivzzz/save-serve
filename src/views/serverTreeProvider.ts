@@ -64,7 +64,10 @@ export class GroupTreeItem extends TreeItem {
         super(group.name, vscode.TreeItemCollapsibleState.Expanded);
         this.tooltip = group.description || group.name;
         this.contextValue = 'group';
-        this.iconPath = new vscode.ThemeIcon('folder');
+
+        // Используем кастомную иконку если задана, иначе дефолтную
+        const iconId = group.icon || 'folder';
+        this.iconPath = new vscode.ThemeIcon(iconId, group.color ? new vscode.ThemeColor(group.color) : undefined);
     }
 }
 
@@ -89,7 +92,10 @@ export class ServerTreeItem extends TreeItem {
         this.tooltip = `${server.username}@${server.host}:${server.port}`;
         this.description = `${server.username}@${server.host}`;
         this.contextValue = 'server';
-        this.iconPath = new vscode.ThemeIcon('server');
+
+        // Используем кастомную иконку если задана, иначе дефолтную
+        const iconId = server.icon || 'server';
+        this.iconPath = new vscode.ThemeIcon(iconId, server.color ? new vscode.ThemeColor(server.color) : undefined);
 
         // Добавляет команду, которая будет вызываться при клике на элемент
         this.command = {
