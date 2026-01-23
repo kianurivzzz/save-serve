@@ -2,7 +2,7 @@
   "name": "save-serve",
   "displayName": "Save Serve",
   "description": "Save accesses to your servers in a couple mouse clicks, then quickly connect to them. Right in your favorite code editor. Easy and secure. Use Save Serve for free!",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "publisher": "nkarasyov",
   "engines": {
     "vscode": "^1.80.0"
@@ -250,6 +250,7 @@
     "watch-tests": "tsc -p . -w --outDir out",
     "pretest": "npm run compile-tests && npm run compile && npm run lint",
     "lint": "eslint src",
+    "format": "prettier --write \"src/**/*.ts\" \"l10n/**/*.json\"",
     "test": "vscode-test",
     "copy-l10n": "mkdir -p ./dist/l10n && cp ./l10n/*.json ./dist/l10n/"
   },
@@ -262,6 +263,7 @@
     "@vscode/test-cli": "^0.0.10",
     "@vscode/test-electron": "^2.5.2",
     "eslint": "^9.25.1",
+    "prettier": "^3.8.1",
     "ts-loader": "^9.5.2",
     "typescript": "^5.8.3",
     "webpack": "^5.99.8",

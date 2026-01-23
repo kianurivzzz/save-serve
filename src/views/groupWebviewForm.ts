@@ -1,132 +1,153 @@
-import * as vscode from 'vscode';
-import { ServerGroup } from '../models/serverModel';
-import { LocalizationService } from '../services/localizationService';
-import { ServerService } from '../services/serverService';
+import * as crypto from 'crypto'
+import * as vscode from 'vscode'
+import { ServerGroup } from '../models/serverModel'
+import { LocalizationService } from '../services/localizationService'
+import { ServerService } from '../services/serverService'
 
 export class GroupWebviewForm {
-    private localization = LocalizationService.getInstance();
-    private currentPanel?: vscode.WebviewPanel;
+	private localization = LocalizationService.getInstance()
+	private currentPanel?: vscode.WebviewPanel
 
-    constructor(private serverService: ServerService, private context: vscode.ExtensionContext) {}
+	constructor(
+		private serverService: ServerService,
+		private context: vscode.ExtensionContext
+	) {}
 
-    async showAddGroupWebview(): Promise<ServerGroup | undefined> {
-        return this.showGroupWebview(undefined);
-    }
+	async showAddGroupWebview(): Promise<ServerGroup | undefined> {
+		return this.showGroupWebview(undefined)
+	}
 
-    async showEditGroupWebview(group: ServerGroup): Promise<ServerGroup | undefined> {
-        return this.showGroupWebview(group);
-    }
+	async showEditGroupWebview(
+		group: ServerGroup
+	): Promise<ServerGroup | undefined> {
+		return this.showGroupWebview(group)
+	}
 
-    private async showGroupWebview(existingGroup?: ServerGroup): Promise<ServerGroup | undefined> {
-        const isEdit = !!existingGroup;
-        const title = isEdit
-            ? this.localization.localize('form.editGroup', existingGroup!.name)
-            : this.localization.localize('form.addGroup');
+	private async showGroupWebview(
+		existingGroup?: ServerGroup
+	): Promise<ServerGroup | undefined> {
+		const isEdit = !!existingGroup
+		const title = isEdit
+			? this.localization.localize('form.editGroup', existingGroup!.name)
+			: this.localization.localize('form.addGroup')
 
-        // Закрываем предыдущую панель, если она открыта
-        if (this.currentPanel) {
-            this.currentPanel.dispose();
-        }
+		// Закрываем предыдущую панель, если она открыта
+		if (this.currentPanel) {
+			this.currentPanel.dispose()
+		}
 
-        // Создаем новую webview панель
-        this.currentPanel = vscode.window.createWebviewPanel(
-            'groupForm',
-            title,
-            vscode.ViewColumn.One,
-            {
-                enableScripts: true,
-                retainContextWhenHidden: true, // Ключевой параметр для сохранения состояния
-                localResourceRoots: []
-            }
-        );
+		// Создаем новую webview панель
+		this.currentPanel = vscode.window.createWebviewPanel(
+			'groupForm',
+			title,
+			vscode.ViewColumn.One,
+			{
+				enableScripts: true,
+				retainContextWhenHidden: true, // Ключевой параметр для сохранения состояния
+				localResourceRoots: []
+			}
+		)
 
-        // Устанавливаем HTML содержимое
-        this.currentPanel.webview.html = this.getWebviewContent(existingGroup);
+		// Устанавливаем HTML содержимое
+		this.currentPanel.webview.html = this.getWebviewContent(existingGroup)
 
-        // Обрабатываем сообщения от webview
-        return new Promise((resolve) => {
-            if (!this.currentPanel) {
-                resolve(undefined);
-                return;
-            }
+		// Обрабатываем сообщения от webview
+		return new Promise((resolve) => {
+			if (!this.currentPanel) {
+				resolve(undefined)
+				return
+			}
 
-            this.currentPanel.webview.onDidReceiveMessage(
-                async (message: any) => {
-                    switch (message.type) {
-                        case 'submit':
-                            try {
-                                const groupData = message.data;
-                                console.log('Получены данные группы:', JSON.stringify(groupData, null, 2));
+			this.currentPanel.webview.onDidReceiveMessage(
+				async (message: any) => {
+					switch (message.type) {
+						case 'submit':
+							try {
+								const groupData = message.data
+								console.log(
+									'Получены данные группы:',
+									JSON.stringify(groupData, null, 2)
+								)
 
-                                const group = await this.processGroupData(groupData, existingGroup);
+								const group = await this.processGroupData(
+									groupData,
+									existingGroup
+								)
 
-                                if (this.currentPanel) {
-                                    this.currentPanel.dispose();
-                                    this.currentPanel = undefined;
-                                }
+								if (this.currentPanel) {
+									this.currentPanel.dispose()
+									this.currentPanel = undefined
+								}
 
-                                resolve(group);
-                            } catch (error) {
-                                console.error('Ошибка при обработке данных группы:', error);
-                                this.currentPanel?.webview.postMessage({
-                                    type: 'error',
-                                    message: error instanceof Error ? error.message : String(error)
-                                });
-                            }
-                            break;
+								resolve(group)
+							} catch (error) {
+								console.error('Ошибка при обработке данных группы:', error)
+								this.currentPanel?.webview.postMessage({
+									type: 'error',
+									message:
+										error instanceof Error ? error.message : String(error)
+								})
+							}
+							break
 
-                        case 'cancel':
-                            if (this.currentPanel) {
-                                this.currentPanel.dispose();
-                                this.currentPanel = undefined;
-                            }
-                            resolve(undefined);
-                            break;
-                    }
-                },
-                undefined,
-                this.context.subscriptions
-            );
+						case 'cancel':
+							if (this.currentPanel) {
+								this.currentPanel.dispose()
+								this.currentPanel = undefined
+							}
+							resolve(undefined)
+							break
+					}
+				},
+				undefined,
+				this.context.subscriptions
+			)
 
-            // Обрабатываем закрытие панели
-            this.currentPanel.onDidDispose(() => {
-                this.currentPanel = undefined;
-                resolve(undefined);
-            });
-        });
-    }
+			// Обрабатываем закрытие панели
+			this.currentPanel.onDidDispose(() => {
+				this.currentPanel = undefined
+				resolve(undefined)
+			})
+		})
+	}
 
-    private async processGroupData(data: any, existingGroup?: ServerGroup): Promise<ServerGroup> {
-        const groupData = {
-            name: data.name,
-            description: data.description || undefined,
-            icon: data.groupIcon || 'folder',
-            color: data.groupColor || undefined
-        };
+	private async processGroupData(
+		data: any,
+		existingGroup?: ServerGroup
+	): Promise<ServerGroup> {
+		const groupData = {
+			name: data.name,
+			description: data.description || undefined,
+			icon: data.groupIcon || 'folder',
+			color: data.groupColor || undefined
+		}
 
-        if (existingGroup) {
-            // Обновляем существующую группу
-            const updatedGroup: ServerGroup = { ...groupData, id: existingGroup.id };
-            await this.serverService.updateGroup(updatedGroup);
-            vscode.window.showInformationMessage(
-                this.localization.localize('form.groupUpdated', groupData.name)
-            );
-            return updatedGroup;
-        } else {
-            // Создаем новую группу
-            const group = await this.serverService.addGroup(groupData.name, groupData.description);
-            vscode.window.showInformationMessage(
-                this.localization.localize('form.groupAdded', groupData.name)
-            );
-            return group;
-        }
-    }
+		if (existingGroup) {
+			// Обновляем существующую группу
+			const updatedGroup: ServerGroup = { ...groupData, id: existingGroup.id }
+			await this.serverService.updateGroup(updatedGroup)
+			vscode.window.showInformationMessage(
+				this.localization.localize('form.groupUpdated', groupData.name)
+			)
+			return updatedGroup
+		} else {
+			// Создаем новую группу
+			const group = await this.serverService.addGroup(
+				groupData.name,
+				groupData.description
+			)
+			vscode.window.showInformationMessage(
+				this.localization.localize('form.groupAdded', groupData.name)
+			)
+			return group
+		}
+	}
 
-    private getWebviewContent(existingGroup?: ServerGroup): string {
-        const isEdit = !!existingGroup;
-        const nonce = this.generateNonce();
+	private getWebviewContent(existingGroup?: ServerGroup): string {
+		const isEdit = !!existingGroup
+		const nonce = this.generateNonce()
 
-        return `<!DOCTYPE html>
+		return `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -304,7 +325,7 @@ export class GroupWebviewForm {
 
             <div class="form-group">
                 <label for="description">${this.localization.localize('form.groupDescription')}</label>
-                <textarea id="description" name="description" rows="3" placeholder="${this.localization.localize('form.groupDescriptionPlaceholder') || 'Введите описание группы (необязательно)'}">${existingGroup?.description || ''}</textarea>
+                <textarea id="description" name="description" rows="3" placeholder="${this.localization.localize('form.groupDescriptionPlaceholder') || 'Введите описание группы, необязательно'}">${existingGroup?.description || ''}</textarea>
             </div>
 
             <div class="form-group">
@@ -424,79 +445,112 @@ export class GroupWebviewForm {
         }
     </script>
 </body>
-</html>`;
-    }
+</html>`
+	}
 
-    private getGroupIconOptions(selectedIcon?: string): string {
-        const groupIcons = [
-            { id: 'folder', name: this.localization.localize('icon.folder', 'Folder') },
-            { id: 'folder-opened', name: this.localization.localize('icon.folderOpened', 'Opened Folder') },
-            { id: 'organization', name: this.localization.localize('icon.organization', 'Organization') },
-            { id: 'package', name: this.localization.localize('icon.package', 'Package') },
-            { id: 'tag', name: this.localization.localize('icon.tag', 'Tag') },
-            { id: 'workspace', name: this.localization.localize('icon.workspace', 'Workspace') },
-            { id: 'project', name: this.localization.localize('icon.project', 'Project') },
-            { id: 'symbol-namespace', name: this.localization.localize('icon.namespace', 'Namespace') },
-            { id: 'symbol-misc', name: this.localization.localize('icon.misc', 'Other') },
-            { id: 'layers', name: this.localization.localize('icon.layers', 'Layers') },
-            { id: 'group-by-ref-type', name: this.localization.localize('icon.grouping', 'Grouping') },
-            { id: 'archive', name: this.localization.localize('icon.archive', 'Archive') }
-        ];
+	private getGroupIconOptions(selectedIcon?: string): string {
+		const groupIcons = [
+			{
+				id: 'folder',
+				name: this.localization.localize('icon.folder', 'Folder')
+			},
+			{
+				id: 'folder-opened',
+				name: this.localization.localize('icon.folderOpened', 'Opened Folder')
+			},
+			{
+				id: 'organization',
+				name: this.localization.localize('icon.organization', 'Organization')
+			},
+			{
+				id: 'package',
+				name: this.localization.localize('icon.package', 'Package')
+			},
+			{ id: 'tag', name: this.localization.localize('icon.tag', 'Tag') },
+			{
+				id: 'workspace',
+				name: this.localization.localize('icon.workspace', 'Workspace')
+			},
+			{
+				id: 'project',
+				name: this.localization.localize('icon.project', 'Project')
+			},
+			{
+				id: 'symbol-namespace',
+				name: this.localization.localize('icon.namespace', 'Namespace')
+			},
+			{
+				id: 'symbol-misc',
+				name: this.localization.localize('icon.misc', 'Other')
+			},
+			{
+				id: 'layers',
+				name: this.localization.localize('icon.layers', 'Layers')
+			},
+			{
+				id: 'group-by-ref-type',
+				name: this.localization.localize('icon.grouping', 'Grouping')
+			},
+			{
+				id: 'archive',
+				name: this.localization.localize('icon.archive', 'Archive')
+			}
+		]
 
-        return groupIcons.map(icon => {
-            const iconSymbol = this.getGroupIconSymbol(icon.id);
-            return `<div class="icon-option ${selectedIcon === icon.id ? 'selected' : ''}" data-icon="${icon.id}">
+		return groupIcons
+			.map((icon) => {
+				const iconSymbol = this.getGroupIconSymbol(icon.id)
+				return `<div class="icon-option ${selectedIcon === icon.id ? 'selected' : ''}" data-icon="${icon.id}">
                 <div style="font-size: 16px;">${iconSymbol}</div>
                 <div>${icon.name}</div>
-            </div>`;
-        }).join('');
-    }
+            </div>`
+			})
+			.join('')
+	}
 
-    private getGroupIconSymbol(iconId: string): string {
-        const iconMap: Record<string, string> = {
-            'folder': '📁',
-            'folder-opened': '📂',
-            'organization': '🏢',
-            'package': '📦',
-            'tag': '🏷️',
-            'workspace': '💼',
-            'project': '📋',
-            'symbol-namespace': '📚',
-            'symbol-misc': '🔗',
-            'layers': '📑',
-            'group-by-ref-type': '📊',
-            'archive': '🗃️'
-        };
-        return iconMap[iconId] || '📁';
-    }
+	private getGroupIconSymbol(iconId: string): string {
+		const iconMap: Record<string, string> = {
+			folder: '📁',
+			'folder-opened': '📂',
+			organization: '🏢',
+			package: '📦',
+			tag: '🏷️',
+			workspace: '💼',
+			project: '📋',
+			'symbol-namespace': '📚',
+			'symbol-misc': '🔗',
+			layers: '📑',
+			'group-by-ref-type': '📊',
+			archive: '🗃️'
+		}
+		return iconMap[iconId] || '📁'
+	}
 
-    private getColorOptions(selectedColor?: string): string {
-        const colors = [
-            { id: '', color: 'transparent', name: 'По умолчанию' },
-            { id: 'charts.red', color: '#ff6b6b', name: 'Красный' },
-            { id: 'charts.orange', color: '#ffa726', name: 'Оранжевый' },
-            { id: 'charts.yellow', color: '#ffeb3b', name: 'Жёлтый' },
-            { id: 'charts.green', color: '#4caf50', name: 'Зелёный' },
-            { id: 'charts.blue', color: '#2196f3', name: 'Синий' },
-            { id: 'charts.purple', color: '#9c27b0', name: 'Фиолетовый' },
-            { id: 'charts.pink', color: '#e91e63', name: 'Розовый' }
-        ];
+	private getColorOptions(selectedColor?: string): string {
+		const colors = [
+			{ id: '', color: 'transparent', name: 'По умолчанию' },
+			{ id: 'charts.red', color: '#ff6b6b', name: 'Красный' },
+			{ id: 'charts.orange', color: '#ffa726', name: 'Оранжевый' },
+			{ id: 'charts.yellow', color: '#ffeb3b', name: 'Жёлтый' },
+			{ id: 'charts.green', color: '#4caf50', name: 'Зелёный' },
+			{ id: 'charts.blue', color: '#2196f3', name: 'Синий' },
+			{ id: 'charts.purple', color: '#9c27b0', name: 'Фиолетовый' },
+			{ id: 'charts.pink', color: '#e91e63', name: 'Розовый' }
+		]
 
-        return colors.map(color =>
-            `<div class="color-option ${selectedColor === color.id ? 'selected' : ''}"
+		return colors
+			.map(
+				(color) =>
+					`<div class="color-option ${selectedColor === color.id ? 'selected' : ''}"
                   data-color="${color.id}"
                   style="background-color: ${color.color};"
                   title="${color.name}">
             </div>`
-        ).join('');
-    }
+			)
+			.join('')
+	}
 
-    private generateNonce(): string {
-        let text = '';
-        const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        for (let i = 0; i < 32; i++) {
-            text += possible.charAt(Math.floor(Math.random() * possible.length));
-        }
-        return text;
-    }
+	private generateNonce(): string {
+		return crypto.randomBytes(32).toString('hex')
+	}
 }

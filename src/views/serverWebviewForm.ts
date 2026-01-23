@@ -1,179 +1,210 @@
-import * as vscode from 'vscode';
-import { Server } from '../models/serverModel';
-import { LocalizationService } from '../services/localizationService';
-import { ServerService } from '../services/serverService';
+import * as crypto from 'crypto'
+import * as vscode from 'vscode'
+import { Server } from '../models/serverModel'
+import { LocalizationService } from '../services/localizationService'
+import { ServerService } from '../services/serverService'
 
 export class ServerWebviewForm {
-    private localization = LocalizationService.getInstance();
-    private currentPanel?: vscode.WebviewPanel;
+	private localization = LocalizationService.getInstance()
+	private currentPanel?: vscode.WebviewPanel
 
-    constructor(private serverService: ServerService, private context: vscode.ExtensionContext) {}
+	constructor(
+		private serverService: ServerService,
+		private context: vscode.ExtensionContext
+	) {}
 
-    async showAddServerWebview(): Promise<Server | undefined> {
-        return this.showServerWebview(undefined);
-    }
+	async showAddServerWebview(): Promise<Server | undefined> {
+		return this.showServerWebview(undefined)
+	}
 
-    async showEditServerWebview(server: Server): Promise<Server | undefined> {
-        return this.showServerWebview(server);
-    }
+	async showEditServerWebview(server: Server): Promise<Server | undefined> {
+		return this.showServerWebview(server)
+	}
 
-    private async showServerWebview(existingServer?: Server): Promise<Server | undefined> {
-        const isEdit = !!existingServer;
-        const title = isEdit
-            ? this.localization.localize('form.editServer', existingServer!.name)
-            : this.localization.localize('form.addServer');
+	private async showServerWebview(
+		existingServer?: Server
+	): Promise<Server | undefined> {
+		const isEdit = !!existingServer
+		const title = isEdit
+			? this.localization.localize('form.editServer', existingServer!.name)
+			: this.localization.localize('form.addServer')
 
-        // Закрываем предыдущую панель, если она открыта
-        if (this.currentPanel) {
-            this.currentPanel.dispose();
-        }
+		// Закрываем предыдущую панель, если она открыта
+		if (this.currentPanel) {
+			this.currentPanel.dispose()
+		}
 
-        // Создаем новую webview панель
-        this.currentPanel = vscode.window.createWebviewPanel(
-            'serverForm',
-            title,
-            vscode.ViewColumn.One,
-            {
-                enableScripts: true,
-                retainContextWhenHidden: true, // Ключевой параметр для сохранения состояния
-                localResourceRoots: []
-            }
-        );
+		// Создаем новую webview панель
+		this.currentPanel = vscode.window.createWebviewPanel(
+			'serverForm',
+			title,
+			vscode.ViewColumn.One,
+			{
+				enableScripts: true,
+				retainContextWhenHidden: true, // Ключевой параметр для сохранения состояния
+				localResourceRoots: []
+			}
+		)
 
-        // Получаем группы для dropdown
-        const groups = await this.serverService.getGroups();
+		// Получаем группы для dropdown
+		const groups = await this.serverService.getGroups()
 
-        // Устанавливаем HTML содержимое
-        this.currentPanel.webview.html = this.getWebviewContent(existingServer, groups);
+		// Устанавливаем HTML содержимое
+		this.currentPanel.webview.html = this.getWebviewContent(
+			existingServer,
+			groups
+		)
 
-        // Обрабатываем сообщения от webview
-        return new Promise((resolve) => {
-            if (!this.currentPanel) {
-                resolve(undefined);
-                return;
-            }
+		// Обрабатываем сообщения от webview
+		return new Promise((resolve) => {
+			if (!this.currentPanel) {
+				resolve(undefined)
+				return
+			}
 
-            this.currentPanel.webview.onDidReceiveMessage(
-                async (message) => {
-                    switch (message.type) {
-                        case 'submit':
-                            try {
-                                const serverData = message.data;
-                                console.log('Получены данные сервера:', JSON.stringify(serverData, null, 2));
+			this.currentPanel.webview.onDidReceiveMessage(
+				async (message) => {
+					switch (message.type) {
+						case 'submit':
+							try {
+								const serverData = message.data
+								console.log(
+									'Получены данные сервера:',
+									JSON.stringify(serverData, null, 2)
+								)
 
-                                // Создаем новую группу, если нужно
-                                if (serverData.groupId === 'create' && serverData.newGroupName) {
-                                    const newGroup = await this.serverService.addGroup(
-                                        serverData.newGroupName,
-                                        serverData.newGroupDescription || undefined
-                                    );
-                                    serverData.groupId = newGroup.id;
-                                }
+								// Создаем новую группу, если нужно
+								if (
+									serverData.groupId === 'create' &&
+									serverData.newGroupName
+								) {
+									const newGroup = await this.serverService.addGroup(
+										serverData.newGroupName,
+										serverData.newGroupDescription || undefined
+									)
+									serverData.groupId = newGroup.id
+								}
 
-                                // Обрабатываем данные сервера
-                                const server = await this.processServerData(serverData, existingServer);
+								// Обрабатываем данные сервера
+								const server = await this.processServerData(
+									serverData,
+									existingServer
+								)
 
-                                if (this.currentPanel) {
-                                    this.currentPanel.dispose();
-                                    this.currentPanel = undefined;
-                                }
+								if (this.currentPanel) {
+									this.currentPanel.dispose()
+									this.currentPanel = undefined
+								}
 
-                                resolve(server);
-                            } catch (error) {
-                                console.error('Ошибка при обработке данных сервера:', error);
-                                this.currentPanel?.webview.postMessage({
-                                    type: 'error',
-                                    message: error instanceof Error ? error.message : String(error)
-                                });
-                            }
-                            break;
+								resolve(server)
+							} catch (error) {
+								console.error('Ошибка при обработке данных сервера:', error)
+								this.currentPanel?.webview.postMessage({
+									type: 'error',
+									message:
+										error instanceof Error ? error.message : String(error)
+								})
+							}
+							break
 
-                        case 'cancel':
-                            if (this.currentPanel) {
-                                this.currentPanel.dispose();
-                                this.currentPanel = undefined;
-                            }
-                            resolve(undefined);
-                            break;
+						case 'cancel':
+							if (this.currentPanel) {
+								this.currentPanel.dispose()
+								this.currentPanel = undefined
+							}
+							resolve(undefined)
+							break
 
-                        case 'selectSshKey':
-                            const keyFiles = await vscode.window.showOpenDialog({
-                                canSelectFiles: true,
-                                canSelectFolders: false,
-                                canSelectMany: false,
-                                title: this.localization.localize('form.sshKeyFile'),
-                                defaultUri: existingServer?.privateKeyPath
-                                    ? vscode.Uri.file(existingServer.privateKeyPath)
-                                    : undefined
-                            });
+						case 'selectSshKey':
+							const keyFiles = await vscode.window.showOpenDialog({
+								canSelectFiles: true,
+								canSelectFolders: false,
+								canSelectMany: false,
+								title: this.localization.localize('form.sshKeyFile'),
+								defaultUri: existingServer?.privateKeyPath
+									? vscode.Uri.file(existingServer.privateKeyPath)
+									: undefined
+							})
 
-                            if (keyFiles && keyFiles.length > 0) {
-                                this.currentPanel?.webview.postMessage({
-                                    type: 'sshKeySelected',
-                                    path: keyFiles[0].fsPath
-                                });
-                            }
-                            break;
+							if (keyFiles && keyFiles.length > 0) {
+								this.currentPanel?.webview.postMessage({
+									type: 'sshKeySelected',
+									path: keyFiles[0].fsPath
+								})
+							}
+							break
 
-                        case 'requestGroups':
-                            const currentGroups = await this.serverService.getGroups();
-                            this.currentPanel?.webview.postMessage({
-                                type: 'groupsData',
-                                groups: currentGroups
-                            });
-                            break;
-                    }
-                },
-                undefined,
-                this.context.subscriptions
-            );
+						case 'requestGroups':
+							const currentGroups = await this.serverService.getGroups()
+							this.currentPanel?.webview.postMessage({
+								type: 'groupsData',
+								groups: currentGroups
+							})
+							break
+					}
+				},
+				undefined,
+				this.context.subscriptions
+			)
 
-            // Обрабатываем закрытие панели
-            this.currentPanel.onDidDispose(() => {
-                this.currentPanel = undefined;
-                resolve(undefined);
-            });
-        });
-    }
+			// Обрабатываем закрытие панели
+			this.currentPanel.onDidDispose(() => {
+				this.currentPanel = undefined
+				resolve(undefined)
+			})
+		})
+	}
 
-    private async processServerData(data: any, existingServer?: Server): Promise<Server> {
-        const serverData = {
-            name: data.name,
-            host: data.host,
-            port: data.port || 22,
-            username: data.username,
-            usePrivateKey: data.usePrivateKey === 'true',
-            groupId: data.groupId === 'none' ? undefined : data.groupId,
-            password: data.usePrivateKey === 'true' ? undefined : data.password,
-            privateKeyPath: data.usePrivateKey === 'true' ? data.privateKeyPath : undefined,
-            privateKeyPassword: data.usePrivateKey === 'true' ? data.privateKeyPassword : undefined,
-            icon: data.serverIcon || 'server',
-            color: data.serverColor || undefined
-        };
+	private async processServerData(
+		data: any,
+		existingServer?: Server
+	): Promise<Server> {
+		const usePrivateKey = data.usePrivateKey === 'true'
+		const serverData = {
+			name: data.name,
+			host: data.host,
+			port: data.port || 22,
+			username: data.username,
+			usePrivateKey,
+			groupId: data.groupId === 'none' ? undefined : data.groupId,
+			password: usePrivateKey ? undefined : data.password || undefined,
+			privateKeyPath: usePrivateKey
+				? data.privateKeyPath || undefined
+				: undefined,
+			privateKeyPassword:
+				usePrivateKey && data.privateKeyPassword
+					? data.privateKeyPassword
+					: undefined,
+			icon: data.serverIcon || 'server',
+			color: data.serverColor || undefined
+		}
 
-        if (existingServer) {
-            // Обновляем существующий сервер
-            const updatedServer: Server = { ...serverData, id: existingServer.id };
-            await this.serverService.updateServer(updatedServer);
-            vscode.window.showInformationMessage(
-                this.localization.localize('form.serverUpdated', serverData.name)
-            );
-            return updatedServer;
-        } else {
-            // Создаем новый сервер
-            const server = await this.serverService.addServer(serverData);
-            vscode.window.showInformationMessage(
-                this.localization.localize('form.serverAdded', serverData.name)
-            );
-            return server;
-        }
-    }
+		if (existingServer) {
+			// Обновляем существующий сервер
+			const updatedServer: Server = { ...serverData, id: existingServer.id }
+			await this.serverService.updateServer(updatedServer)
+			vscode.window.showInformationMessage(
+				this.localization.localize('form.serverUpdated', serverData.name)
+			)
+			return updatedServer
+		} else {
+			// Создаем новый сервер
+			const server = await this.serverService.addServer(serverData)
+			vscode.window.showInformationMessage(
+				this.localization.localize('form.serverAdded', serverData.name)
+			)
+			return server
+		}
+	}
 
-    private getWebviewContent(existingServer?: Server, groups: any[] = []): string {
-        const isEdit = !!existingServer;
-        const nonce = this.generateNonce();
+	private getWebviewContent(
+		existingServer?: Server,
+		groups: any[] = []
+	): string {
+		const isEdit = !!existingServer
+		const nonce = this.generateNonce()
 
-        return `<!DOCTYPE html>
+		return `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -409,9 +440,12 @@ export class ServerWebviewForm {
                 <label>${this.localization.localize('form.selectGroup')}</label>
                 <select id="groupId" name="groupId">
                     <option value="none" ${!existingServer?.groupId ? 'selected' : ''}>${this.localization.localize('form.noGroup')}</option>
-                    ${groups.map(group =>
-                        `<option value="${group.id}" ${existingServer?.groupId === group.id ? 'selected' : ''}>${group.name}</option>`
-                    ).join('')}
+                    ${groups
+											.map(
+												(group) =>
+													`<option value="${group.id}" ${existingServer?.groupId === group.id ? 'selected' : ''}>${group.name}</option>`
+											)
+											.join('')}
                     <option value="create">${this.localization.localize('form.createGroup')}</option>
                 </select>
 
@@ -690,87 +724,117 @@ export class ServerWebviewForm {
         });
     </script>
 </body>
-</html>`;
-    }
+</html>`
+	}
 
-    private getIconOptions(selectedIcon?: string): string {
-        const serverIcons = [
-            { id: 'server', name: this.localization.localize('icon.server', 'Server') },
-            { id: 'vm', name: this.localization.localize('icon.vm', 'VM') },
-            { id: 'database', name: this.localization.localize('icon.database', 'Database') },
-            { id: 'cloud', name: this.localization.localize('icon.cloud', 'Cloud') },
-            { id: 'desktop', name: this.localization.localize('icon.desktop', 'Desktop') },
-            { id: 'server-environment', name: this.localization.localize('icon.environment', 'Environment') },
-            { id: 'server-process', name: this.localization.localize('icon.process', 'Process') },
-            { id: 'terminal', name: this.localization.localize('icon.terminal', 'Terminal') },
-            { id: 'gear', name: this.localization.localize('icon.gear', 'Settings') },
-            { id: 'lock', name: this.localization.localize('icon.lock', 'Security') },
-            { id: 'globe', name: this.localization.localize('icon.globe', 'Web') },
-            { id: 'package', name: this.localization.localize('icon.package', 'Package') },
-            { id: 'circuit-board', name: this.localization.localize('icon.circuit', 'Hardware') },
-            { id: 'rocket', name: this.localization.localize('icon.rocket', 'Launch') },
-            { id: 'symbol-misc', name: this.localization.localize('icon.misc', 'Other') },
-            { id: 'home', name: this.localization.localize('icon.home', 'Home') }
-        ];
+	private getIconOptions(selectedIcon?: string): string {
+		const serverIcons = [
+			{
+				id: 'server',
+				name: this.localization.localize('icon.server', 'Server')
+			},
+			{ id: 'vm', name: this.localization.localize('icon.vm', 'VM') },
+			{
+				id: 'database',
+				name: this.localization.localize('icon.database', 'Database')
+			},
+			{ id: 'cloud', name: this.localization.localize('icon.cloud', 'Cloud') },
+			{
+				id: 'desktop',
+				name: this.localization.localize('icon.desktop', 'Desktop')
+			},
+			{
+				id: 'server-environment',
+				name: this.localization.localize('icon.environment', 'Environment')
+			},
+			{
+				id: 'server-process',
+				name: this.localization.localize('icon.process', 'Process')
+			},
+			{
+				id: 'terminal',
+				name: this.localization.localize('icon.terminal', 'Terminal')
+			},
+			{ id: 'gear', name: this.localization.localize('icon.gear', 'Settings') },
+			{ id: 'lock', name: this.localization.localize('icon.lock', 'Security') },
+			{ id: 'globe', name: this.localization.localize('icon.globe', 'Web') },
+			{
+				id: 'package',
+				name: this.localization.localize('icon.package', 'Package')
+			},
+			{
+				id: 'circuit-board',
+				name: this.localization.localize('icon.circuit', 'Hardware')
+			},
+			{
+				id: 'rocket',
+				name: this.localization.localize('icon.rocket', 'Launch')
+			},
+			{
+				id: 'symbol-misc',
+				name: this.localization.localize('icon.misc', 'Other')
+			},
+			{ id: 'home', name: this.localization.localize('icon.home', 'Home') }
+		]
 
-        return serverIcons.map(icon => {
-            const iconSymbol = this.getIconSymbol(icon.id);
-            return `<div class="icon-option ${selectedIcon === icon.id ? 'selected' : ''}" data-icon="${icon.id}">
+		return serverIcons
+			.map((icon) => {
+				const iconSymbol = this.getIconSymbol(icon.id)
+				return `<div class="icon-option ${selectedIcon === icon.id ? 'selected' : ''}" data-icon="${icon.id}">
                 <div style="font-size: 16px;">${iconSymbol}</div>
                 <div>${icon.name}</div>
-            </div>`;
-        }).join('');
-    }
+            </div>`
+			})
+			.join('')
+	}
 
-    private getIconSymbol(iconId: string): string {
-        const iconMap: Record<string, string> = {
-            'server': '🖥️',
-            'vm': '🖥️',
-            'database': '🗄️',
-            'cloud': '☁️',
-            'desktop': '🖥️',
-            'server-environment': '🌐',
-            'server-process': '⚙️',
-            'terminal': '📟',
-            'gear': '⚙️',
-            'lock': '🔒',
-            'globe': '🌐',
-            'package': '📦',
-            'circuit-board': '🔧',
-            'rocket': '🚀',
-            'symbol-misc': '🔗',
-            'home': '🏠'
-        };
-        return iconMap[iconId] || '🖥️';
-    }
+	private getIconSymbol(iconId: string): string {
+		const iconMap: Record<string, string> = {
+			server: '🖥️',
+			vm: '🖥️',
+			database: '🗄️',
+			cloud: '☁️',
+			desktop: '🖥️',
+			'server-environment': '🌐',
+			'server-process': '⚙️',
+			terminal: '📟',
+			gear: '⚙️',
+			lock: '🔒',
+			globe: '🌐',
+			package: '📦',
+			'circuit-board': '🔧',
+			rocket: '🚀',
+			'symbol-misc': '🔗',
+			home: '🏠'
+		}
+		return iconMap[iconId] || '🖥️'
+	}
 
-    private getColorOptions(selectedColor?: string): string {
-        const colors = [
-            { id: '', color: 'transparent', name: 'По умолчанию' },
-            { id: 'charts.red', color: '#ff6b6b', name: 'Красный' },
-            { id: 'charts.orange', color: '#ffa726', name: 'Оранжевый' },
-            { id: 'charts.yellow', color: '#ffeb3b', name: 'Жёлтый' },
-            { id: 'charts.green', color: '#4caf50', name: 'Зелёный' },
-            { id: 'charts.blue', color: '#2196f3', name: 'Синий' },
-            { id: 'charts.purple', color: '#9c27b0', name: 'Фиолетовый' },
-            { id: 'charts.pink', color: '#e91e63', name: 'Розовый' }
-        ];
+	private getColorOptions(selectedColor?: string): string {
+		const colors = [
+			{ id: '', color: 'transparent', name: 'По умолчанию' },
+			{ id: 'charts.red', color: '#ff6b6b', name: 'Красный' },
+			{ id: 'charts.orange', color: '#ffa726', name: 'Оранжевый' },
+			{ id: 'charts.yellow', color: '#ffeb3b', name: 'Жёлтый' },
+			{ id: 'charts.green', color: '#4caf50', name: 'Зелёный' },
+			{ id: 'charts.blue', color: '#2196f3', name: 'Синий' },
+			{ id: 'charts.purple', color: '#9c27b0', name: 'Фиолетовый' },
+			{ id: 'charts.pink', color: '#e91e63', name: 'Розовый' }
+		]
 
-        return colors.map(color =>
-            `<div class="color-option ${selectedColor === color.id ? 'selected' : ''}"
+		return colors
+			.map(
+				(color) =>
+					`<div class="color-option ${selectedColor === color.id ? 'selected' : ''}"
                   data-color="${color.id}"
                   style="background-color: ${color.color};"
                   title="${color.name}">
             </div>`
-        ).join('');
-    }
+			)
+			.join('')
+	}
 
-    private generateNonce(): string {
-        let text = '';
-        const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        for (let i = 0; i < 32; i++) {
-            text += possible.charAt(Math.floor(Math.random() * possible.length));
-        }
-        return text;
-    }
+	private generateNonce(): string {
+		return crypto.randomBytes(32).toString('hex')
+	}
 }

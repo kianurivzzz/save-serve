@@ -50,6 +50,16 @@
 - Similar improvements applied to group creation and editing forms;
 - Updated password input when connecting to server in Windows PowerShell.
 
+## [1.0.1] - Security and Stability Improvements
+
+- Replaced `Math.random()` with `crypto.randomUUID()` and `crypto.randomBytes()` for secure ID and nonce generation;
+- Fixed issue where server list didn't load on first open, async loading race condition;
+- Fixed issue where SSH key password wasn't cleared when switching from password to key authentication;
+- Refactored SSH expect scripts to reduce code duplication;
+- Improved TypeScript typing by replacing `any` casts with proper interfaces;
+- Localized all hardcoded user-facing strings;
+- Added Prettier for consistent code formatting.
+
 ## [1.0.0] - First Stable Release with UX/UI Improvements
 
 - Added custom icon selection for servers and groups;
