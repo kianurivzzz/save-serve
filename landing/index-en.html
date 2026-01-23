@@ -5,10 +5,8 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Save Serve – SSH servers management right from VS Code</title>
+	<link rel="stylesheet" href="https://unpkg.com/@vscode/codicons/dist/codicon.css">
 	<link rel="stylesheet" href="styles.css">
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 	<link rel="icon" type="image/png" href="img/favicon.png">
 </head>
 
@@ -16,7 +14,7 @@
 	<header>
 		<div class="container header-content">
 			<div class="logo">
-				<img src="img/icon.png" alt="Save Serve Logo" id="logo-image">
+				<img src="img/icon.png" alt="Save Serve Logo">
 				<h1>Save Serve</h1>
 			</div>
 			<nav>
@@ -27,7 +25,7 @@
 					<li><a href="#server-groups">Groups</a></li>
 					<li><a href="#security">Security</a></li>
 					<li><a href="#support">Donate</a></li>
-					<li><a href="index.html" class="lang-switch">РУС</a></li>
+					<li><a href="index.html" class="lang-switch">RU</a></li>
 					<li><a href="https://marketplace.visualstudio.com/items?itemName=nkarasyov.save-serve"
 							target="_blank" class="install-btn">Install</a></li>
 				</ul>
@@ -47,8 +45,14 @@
 						<span class="badge">MIT License</span>
 					</div>
 					<a href="https://marketplace.visualstudio.com/items?itemName=nkarasyov.save-serve" target="_blank"
-						class="cta-btn">Install</a>
-					<a href="https://github.com/kianurivzzz/save-serve" target="_blank" class="github-btn">GitHub</a>
+						class="cta-btn">
+						<i class="codicon codicon-cloud-download"></i>
+						Install
+					</a>
+					<a href="https://github.com/kianurivzzz/save-serve" target="_blank" class="github-btn">
+						<i class="codicon codicon-github"></i>
+						GitHub
+					</a>
 				</div>
 				<div class="hero-image">
 					<video controls autoplay loop muted class="demo-video">
@@ -65,57 +69,57 @@
 			<h2>Features</h2>
 			<div class="features-grid">
 				<div class="feature-card">
-					<div class="feature-icon">🔒</div>
+					<div class="feature-icon"><i class="codicon codicon-shield"></i></div>
 					<h3>Security</h3>
 					<p>Server data gets encrypted storage in the system</p>
 				</div>
 				<div class="feature-card">
-					<div class="feature-icon">🔑</div>
+					<div class="feature-icon"><i class="codicon codicon-key"></i></div>
 					<h3>Multiple Auth Methods</h3>
 					<p>Works with passwords and SSH keys with password protection</p>
 				</div>
 				<div class="feature-card">
-					<div class="feature-icon">🖱️</div>
+					<div class="feature-icon"><i class="codicon codicon-play"></i></div>
 					<h3>One-click Connect</h3>
 					<p>Connect to servers with single click</p>
 				</div>
 				<div class="feature-card">
-					<div class="feature-icon">🧠</div>
+					<div class="feature-icon"><i class="codicon codicon-window"></i></div>
 					<h3>Simple Interface</h3>
 					<p>Clear forms for server management in Russian and English</p>
 				</div>
 				<div class="feature-card">
-					<div class="feature-icon">📁</div>
+					<div class="feature-icon"><i class="codicon codicon-folder-library"></i></div>
 					<h3>Server Groups</h3>
 					<p>Organize servers into custom groups</p>
 				</div>
 				<div class="feature-card">
-					<div class="feature-icon">💾</div>
+					<div class="feature-icon"><i class="codicon codicon-save"></i></div>
 					<h3>Persistent Forms</h3>
 					<p>No data loss when switching windows</p>
 				</div>
 				<div class="feature-card">
-					<div class="feature-icon">✅</div>
+					<div class="feature-icon"><i class="codicon codicon-check"></i></div>
 					<h3>Form Validation</h3>
 					<p>Shows errors in real time</p>
 				</div>
 				<div class="feature-card">
-					<div class="feature-icon">🎨</div>
+					<div class="feature-icon"><i class="codicon codicon-symbol-color"></i></div>
 					<h3>Custom Icons</h3>
 					<p>Pick from many icons for servers and groups</p>
 				</div>
 				<div class="feature-card">
-					<div class="feature-icon">🌈</div>
+					<div class="feature-icon"><i class="codicon codicon-paintcan"></i></div>
 					<h3>Color Coding</h3>
 					<p>Mark servers with colors</p>
 				</div>
 				<div class="feature-card">
-					<div class="feature-icon">⚡</div>
+					<div class="feature-icon"><i class="codicon codicon-keyboard"></i></div>
 					<h3>Keyboard Shortcuts</h3>
 					<p>Use hotkeys for quick actions</p>
 				</div>
 				<div class="feature-card">
-					<div class="feature-icon">🔍</div>
+					<div class="feature-icon"><i class="codicon codicon-search"></i></div>
 					<h3>Quick Search</h3>
 					<p>Search and connect to servers fast</p>
 				</div>
@@ -182,8 +186,8 @@
 										<li><strong>Username</strong> – login for connection</li>
 										<li><strong>Authentication method</strong>:
 											<ul>
-												<li>🔑 <strong>By password</strong> – enter and save password</li>
-												<li>🔐 <strong>By SSH key</strong> – select key file and key password if
+												<li><strong>By password</strong> – enter and save password</li>
+												<li><strong>By SSH key</strong> – select key file and key password if
 													any</li>
 											</ul>
 										</li>
@@ -222,22 +226,22 @@
 
 			<div class="groups-grid">
 				<div class="group-feature">
-					<div class="group-icon">📁</div>
+					<div class="group-icon"><i class="codicon codicon-new-folder"></i></div>
 					<h3>Creating Groups</h3>
 					<p>Create groups by clicking the "Add Group" button in the toolbar</p>
 				</div>
 				<div class="group-feature">
-					<div class="group-icon">🗂️</div>
+					<div class="group-icon"><i class="codicon codicon-list-tree"></i></div>
 					<h3>Organizing Servers</h3>
 					<p>Organize your servers by assigning them to groups during creation or editing</p>
 				</div>
 				<div class="group-feature">
-					<div class="group-icon">➕</div>
+					<div class="group-icon"><i class="codicon codicon-add"></i></div>
 					<h3>Quick Adding</h3>
 					<p>Add a server directly to a group by right-clicking on the group</p>
 				</div>
 				<div class="group-feature">
-					<div class="group-icon">⚙️</div>
+					<div class="group-icon"><i class="codicon codicon-settings-gear"></i></div>
 					<h3>Managing Groups</h3>
 					<p>Edit or delete groups using the context menu</p>
 				</div>
@@ -340,19 +344,19 @@
 
 	<section id="support" class="support">
 		<div class="container">
-			<h2>Donate</h2>
+			<h2>Support the Project</h2>
 			<p>Save Serve is a free, open-source extension. If it has been useful for your work, you can support its
 				development:</p>
 
 			<div class="donation-options">
 				<div class="donation-card">
-					<div class="donation-emoji">☕</div>
+					<div class="donation-icon"><i class="codicon codicon-heart"></i></div>
 					<h3>Buy Me a Coffee</h3>
 					<p>Buy me a coffee so I can code all night</p>
 					<a href="https://www.buymeacoffee.com/nkarasyov" target="_blank" class="donate-btn">Support</a>
 				</div>
 				<div class="donation-card">
-					<div class="donation-emoji">💰</div>
+					<div class="donation-icon"><i class="codicon codicon-globe"></i></div>
 					<h3>CloudTips</h3>
 					<p>Russian donation service if you prefer it</p>
 					<a href="https://pay.cloudtips.ru/p/920f6d9e" target="_blank" class="donate-btn">Support</a>
@@ -369,7 +373,7 @@
 				<div class="footer-logo">
 					<img src="img/icon.png" alt="Save Serve Logo">
 					<h3>Save Serve</h3>
-					<p>Made with ❤️ for developers</p>
+					<p>Made for developers</p>
 				</div>
 				<div class="footer-links">
 					<div class="footer-column">
@@ -388,6 +392,8 @@
 						<ul>
 							<li><a href="https://marketplace.visualstudio.com/items?itemName=nkarasyov.save-serve"
 									target="_blank">VS Code Marketplace</a></li>
+							<li><a href="https://open-vsx.org/extension/nkarasyov/save-serve"
+									target="_blank">Open VSX Registry</a></li>
 							<li><a href="https://github.com/kianurivzzz/save-serve" target="_blank">GitHub</a></li>
 							<li><a href="https://github.com/kianurivzzz/save-serve/issues" target="_blank">Report an
 									issue</a></li>
