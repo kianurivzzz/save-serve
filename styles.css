@@ -1,37 +1,23 @@
 :root {
-	/* Основная цветовая схема VS Code (Dark+) */
-	--vscode-bg: #1e1e1e;
-	--vscode-bg-light: #252526;
-	--vscode-bg-lighter: #2d2d2d;
-	--vscode-editor-bg: #1e1e1e;
-	--vscode-sidebar-bg: #252526;
-	--vscode-text: #d4d4d4;
-	--vscode-text-light: #cccccc;
-	--vscode-text-dim: #9f9f9f;
-	--vscode-accent: #0e639c;
-	--vscode-accent-light: #1177bb;
-	--vscode-accent-hover: #1b80c4;
-	--vscode-accent-dark: #094771;
-	--vscode-highlight: #2677c9;
-	--vscode-button: #0e639c;
-	--vscode-button-hover: #1177bb;
-	--vscode-focus: #007fd4;
-	--vscode-error: #f14c4c;
-	--vscode-warning: #cca700;
-	--vscode-success: #89d185;
-	--vscode-border: #474747;
+	--vscode-bg: #1f1f1f;
+	--vscode-bg-secondary: #181818;
+	--vscode-bg-elevated: #252526;
+	--vscode-bg-card: #2d2d2d;
+	--vscode-text: #cccccc;
+	--vscode-text-secondary: #8b8b8b;
+	--vscode-text-bright: #ffffff;
+	--vscode-accent: #0078d4;
+	--vscode-accent-hover: #1a8fe8;
+	--vscode-accent-secondary: #3794ff;
+	--vscode-border: #3c3c3c;
+	--vscode-border-light: #454545;
+	--vscode-success: #4ec9b0;
+	--vscode-warning: #dcdcaa;
 
-	/* Размеры контейнеров */
 	--container-max-width: 1200px;
-	--container-padding: 20px;
-
-	/* Скругления и тени */
-	--border-radius-sm: 4px;
-	--border-radius-md: 6px;
-	--border-radius-lg: 8px;
-	--shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
-	--shadow-md: 0 4px 16px rgba(0, 0, 0, 0.3);
-	--shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.4);
+	--container-padding: 24px;
+	--border-radius: 6px;
+	--transition: 0.2s ease;
 }
 
 * {
@@ -40,12 +26,16 @@
 	box-sizing: border-box;
 }
 
+html {
+	scroll-behavior: smooth;
+}
+
 body {
-	font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
 	background-color: var(--vscode-bg);
 	color: var(--vscode-text);
-	line-height: 1.5;
-	font-size: 16px;
+	line-height: 1.6;
+	font-size: 15px;
 }
 
 .container {
@@ -55,75 +45,60 @@ body {
 }
 
 a {
-	color: var(--vscode-focus);
+	color: var(--vscode-accent-secondary);
 	text-decoration: none;
-	transition: color 0.2s ease;
+	transition: color var(--transition);
 }
 
 a:hover {
-	color: var(--vscode-accent-light);
-	text-decoration: underline;
-}
-
-button {
-	cursor: pointer;
-	border: none;
-	outline: none;
-	background: none;
-	font-family: inherit;
-}
-
-img {
-	max-width: 100%;
-	height: auto;
+	color: var(--vscode-accent-hover);
 }
 
 code {
-	font-family: 'Consolas', 'Monaco', 'Andale Mono', monospace;
-	background-color: var(--vscode-bg-lighter);
-	padding: 2px 4px;
-	border-radius: var(--border-radius-sm);
+	font-family: 'SF Mono', Consolas, 'Liberation Mono', Menlo, monospace;
+	background-color: var(--vscode-bg-card);
+	padding: 2px 6px;
+	border-radius: 4px;
 	font-size: 0.9em;
 }
 
 h2 {
-	font-size: 2.2rem;
-	margin-bottom: 2rem;
-	font-weight: 500;
+	font-size: 2rem;
+	font-weight: 600;
+	margin-bottom: 1rem;
+	color: var(--vscode-text-bright);
 	text-align: center;
-	color: var(--vscode-text-light);
 }
 
 h3 {
-	font-size: 1.4rem;
-	margin-bottom: 1rem;
-	font-weight: 500;
-	color: var(--vscode-text-light);
+	font-size: 1.1rem;
+	font-weight: 600;
+	margin-bottom: 0.5rem;
+	color: var(--vscode-text-bright);
 }
 
 section {
-	padding: 5rem 0;
-	position: relative;
+	padding: 80px 0;
 }
 
 section:nth-child(even) {
-	background-color: var(--vscode-bg-light);
+	background-color: var(--vscode-bg-secondary);
 }
 
-/* Шапка */
 header {
-	background-color: var(--vscode-sidebar-bg);
-	padding: 1rem 0;
+	background-color: var(--vscode-bg-secondary);
+	padding: 0;
 	position: sticky;
 	top: 0;
 	z-index: 100;
-	box-shadow: var(--shadow-sm);
+	border-bottom: 1px solid var(--vscode-border);
 }
 
 .header-content {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	height: 48px;
 }
 
 .logo {
@@ -133,273 +108,290 @@ header {
 }
 
 .logo img {
-	width: 32px;
-	height: 32px;
+	width: 24px;
+	height: 24px;
 }
 
 .logo h1 {
-	font-size: 1.5rem;
+	font-size: 1rem;
 	font-weight: 500;
-	color: var(--vscode-text-light);
+	color: var(--vscode-text-bright);
 }
 
 nav ul {
 	display: flex;
-	gap: 1.5rem;
+	gap: 0;
 	list-style: none;
+	align-items: center;
+}
+
+nav li {
+	display: flex;
+	align-items: center;
 }
 
 nav a {
-	font-size: 0.95rem;
+	font-size: 13px;
 	color: var(--vscode-text);
+	padding: 14px 12px;
+	display: block;
+	transition: background-color var(--transition), color var(--transition);
+}
+
+nav a:hover {
+	color: var(--vscode-text-bright);
+	background-color: var(--vscode-bg-elevated);
 }
 
 .install-btn {
-	background-color: var(--vscode-button);
-	color: white;
-	padding: 0.5rem 1rem;
-	border-radius: var(--border-radius-sm);
-	transition: background-color 0.2s ease;
+	background-color: var(--vscode-accent);
+	color: var(--vscode-text-bright) !important;
+	padding: 6px 14px !important;
+	border-radius: var(--border-radius);
+	margin-left: 8px;
+	font-weight: 500;
 }
 
 .install-btn:hover {
-	background-color: var(--vscode-button-hover);
-	text-decoration: none;
-	color: white;
+	background-color: var(--vscode-accent-hover);
 }
 
-/* Герой секция */
+.lang-switch {
+	color: var(--vscode-text-secondary) !important;
+	font-size: 12px !important;
+	padding: 6px 10px !important;
+	border: 1px solid var(--vscode-border);
+	border-radius: var(--border-radius);
+	margin-left: 8px;
+}
+
+.lang-switch:hover {
+	border-color: var(--vscode-border-light);
+	color: var(--vscode-text) !important;
+	background-color: transparent;
+}
+
 .hero {
-	padding: 5rem 0;
-	background-color: var(--vscode-bg);
-	position: relative;
-	overflow: hidden;
-}
-
-.hero::after {
-	content: '';
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	background:
-		radial-gradient(circle at 10% 20%, rgba(14, 99, 156, 0.1) 0%, transparent 40%),
-		radial-gradient(circle at 90% 80%, rgba(14, 99, 156, 0.1) 0%, transparent 40%);
-	z-index: 1;
+	padding: 100px 0 80px;
+	background: linear-gradient(180deg, var(--vscode-bg-secondary) 0%, var(--vscode-bg) 100%);
 }
 
 .hero-content {
 	display: grid;
-	grid-template-columns: 1fr 1fr;
+	grid-template-columns: 1fr 1.2fr;
 	align-items: center;
-	gap: 3rem;
-	position: relative;
-	z-index: 2;
+	gap: 60px;
 }
 
 .hero-text {
-	max-width: 500px;
+	max-width: 480px;
 }
 
 .hero-text h2 {
-	font-size: 2.8rem;
-	margin-bottom: 1.5rem;
-	font-weight: 500;
+	font-size: 2.5rem;
+	font-weight: 600;
+	margin-bottom: 1rem;
 	text-align: left;
-	color: var(--vscode-text-light);
 	line-height: 1.2;
 }
 
 .hero-text p {
-	font-size: 1.2rem;
-	margin-bottom: 2rem;
-	color: var(--vscode-text-dim);
+	font-size: 1.1rem;
+	margin-bottom: 1.5rem;
+	color: var(--vscode-text-secondary);
+	line-height: 1.7;
 }
 
 .badge-container {
 	display: flex;
-	gap: 1rem;
+	gap: 8px;
 	margin-bottom: 2rem;
 }
 
 .badge {
-	display: inline-block;
-	padding: 0.4rem 0.8rem;
-	background-color: var(--vscode-bg-lighter);
-	border-radius: var(--border-radius-sm);
-	font-size: 0.9rem;
-	color: var(--vscode-text-dim);
+	display: inline-flex;
+	align-items: center;
+	padding: 4px 10px;
+	background-color: var(--vscode-bg-card);
+	border-radius: var(--border-radius);
+	font-size: 12px;
+	color: var(--vscode-text-secondary);
+	border: 1px solid var(--vscode-border);
 }
 
 .cta-btn,
 .github-btn {
-	display: inline-block;
-	padding: 0.8rem 1.6rem;
-	border-radius: var(--border-radius-sm);
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 10px 20px;
+	border-radius: var(--border-radius);
 	font-weight: 500;
-	transition: background-color 0.2s ease;
-	margin-right: 1rem;
+	font-size: 14px;
+	transition: all var(--transition);
+	margin-right: 12px;
 }
 
 .cta-btn {
-	background-color: var(--vscode-button);
-	color: white;
+	background-color: var(--vscode-accent);
+	color: var(--vscode-text-bright);
 }
 
 .cta-btn:hover {
-	background-color: var(--vscode-button-hover);
-	text-decoration: none;
-	color: white;
+	background-color: var(--vscode-accent-hover);
+	color: var(--vscode-text-bright);
 }
 
 .github-btn {
-	background-color: var(--vscode-bg-lighter);
+	background-color: transparent;
 	color: var(--vscode-text);
+	border: 1px solid var(--vscode-border);
 }
 
 .github-btn:hover {
-	background-color: var(--vscode-bg-light);
-	text-decoration: none;
-}
-
-.hero-image {
-	position: relative;
-}
-
-.hero-image img {
-	border-radius: var(--border-radius-md);
-	box-shadow: var(--shadow-md);
-	border: 1px solid var(--vscode-border);
+	border-color: var(--vscode-border-light);
+	color: var(--vscode-text-bright);
+	background-color: var(--vscode-bg-card);
 }
 
 .demo-video {
 	width: 100%;
-	border-radius: var(--border-radius-md);
-	box-shadow: var(--shadow-md);
+	border-radius: var(--border-radius);
 	border: 1px solid var(--vscode-border);
-	background-color: var(--vscode-bg-lighter);
-	max-height: 400px;
-	object-fit: contain;
+	background-color: var(--vscode-bg-card);
 }
 
-/* Возможности */
+.section-subtitle {
+	text-align: center;
+	color: var(--vscode-text-secondary);
+	margin-bottom: 3rem;
+	max-width: 600px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
 .features-grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-	gap: 2rem;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 16px;
 	margin-top: 3rem;
 }
 
 .feature-card {
-	background-color: var(--vscode-bg-lighter);
-	padding: 2rem;
-	border-radius: var(--border-radius-md);
-	box-shadow: var(--shadow-sm);
-	transition: transform 0.3s ease, box-shadow 0.3s ease;
+	background-color: var(--vscode-bg-card);
+	padding: 24px;
+	border-radius: var(--border-radius);
+	border: 1px solid var(--vscode-border);
+	transition: border-color var(--transition), transform var(--transition);
 }
 
 .feature-card:hover {
-	transform: translateY(-5px);
-	box-shadow: var(--shadow-md);
+	border-color: var(--vscode-border-light);
+	transform: translateY(-2px);
 }
 
 .feature-icon {
-	font-size: 2rem;
-	margin-bottom: 1rem;
+	margin-bottom: 16px;
+	color: var(--vscode-accent-secondary);
+	font-size: 28px;
+	line-height: 1;
 }
 
 .feature-card h3 {
-	font-size: 1.3rem;
-	margin-bottom: 1rem;
+	font-size: 14px;
+	margin-bottom: 8px;
 }
 
 .feature-card p {
-	color: var(--vscode-text-dim);
+	color: var(--vscode-text-secondary);
+	font-size: 13px;
+	line-height: 1.5;
 }
 
-/* Установка */
+.installation {
+	text-align: center;
+}
+
 .installation-steps {
 	display: flex;
-	justify-content: space-between;
-	max-width: 700px;
-	margin: 0 auto 3rem;
-	flex-wrap: wrap;
+	justify-content: center;
+	gap: 40px;
+	margin: 3rem auto;
+	max-width: 800px;
 }
 
 .step {
-	flex-basis: calc(25% - 20px);
+	flex: 1;
 	text-align: center;
 	position: relative;
-	padding: 0 10px;
 }
 
 .step:not(:last-child)::after {
 	content: "";
 	position: absolute;
-	top: 25px;
-	right: -5px;
-	width: calc(100% - 50px);
+	top: 20px;
+	right: -24px;
+	width: 8px;
 	height: 2px;
 	background-color: var(--vscode-border);
 }
 
 .step-number {
-	width: 50px;
-	height: 50px;
+	width: 40px;
+	height: 40px;
 	background-color: var(--vscode-accent);
-	color: white;
+	color: var(--vscode-text-bright);
 	border-radius: 50%;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	font-size: 1.5rem;
-	font-weight: bold;
-	margin: 0 auto 1rem;
+	font-size: 14px;
+	font-weight: 600;
+	margin: 0 auto 12px;
 }
 
 .step p {
-	color: var(--vscode-text-dim);
+	color: var(--vscode-text-secondary);
+	font-size: 13px;
 }
 
 .code-block {
-	max-width: 600px;
-	margin: 0 auto 2rem;
-	background-color: var(--vscode-bg-lighter);
-	border-radius: var(--border-radius-md);
+	max-width: 500px;
+	margin: 0 auto 1.5rem;
+	background-color: var(--vscode-bg-card);
+	border-radius: var(--border-radius);
 	overflow: hidden;
-	box-shadow: var(--shadow-sm);
+	border: 1px solid var(--vscode-border);
+	text-align: left;
 }
 
 .code-header {
-	background-color: var(--vscode-bg-light);
-	padding: 0.5rem 1rem;
+	background-color: var(--vscode-bg-elevated);
+	padding: 8px 12px;
 	display: flex;
 	align-items: center;
-	gap: 8px;
+	gap: 6px;
+	border-bottom: 1px solid var(--vscode-border);
 }
 
 .dot {
-	width: 12px;
-	height: 12px;
+	width: 10px;
+	height: 10px;
 	border-radius: 50%;
 }
 
-.red {
-	background-color: #ff5f56;
-}
+.red { background-color: #ff5f57; }
+.yellow { background-color: #febc2e; }
+.green { background-color: #28c840; }
 
-.yellow {
-	background-color: #ffbd2e;
-}
-
-.green {
-	background-color: #27c93f;
+.code-header span {
+	margin-left: 8px;
+	font-size: 12px;
+	color: var(--vscode-text-secondary);
 }
 
 .code-content {
-	padding: 1.5rem;
-	overflow-x: auto;
+	padding: 16px;
 }
 
 .code-content pre {
@@ -407,12 +399,10 @@ nav a {
 }
 
 .or-text {
-	text-align: center;
-	color: var(--vscode-text-dim);
-	font-style: italic;
+	color: var(--vscode-text-secondary);
+	font-size: 13px;
 }
 
-/* Как использовать */
 .usage-tabs {
 	max-width: 900px;
 	margin: 0 auto;
@@ -421,25 +411,29 @@ nav a {
 .tab-headers {
 	display: flex;
 	justify-content: center;
-	gap: 1rem;
+	gap: 8px;
 	margin-bottom: 2rem;
 }
 
 .tab-btn {
-	padding: 0.8rem 1.6rem;
-	background-color: var(--vscode-bg-lighter);
+	padding: 8px 16px;
+	background-color: transparent;
 	color: var(--vscode-text);
-	border-radius: var(--border-radius-sm);
-	transition: background-color 0.2s ease;
+	border: 1px solid var(--vscode-border);
+	border-radius: var(--border-radius);
+	font-size: 13px;
+	cursor: pointer;
+	transition: all var(--transition);
 }
 
 .tab-btn:hover {
-	background-color: var(--vscode-bg-light);
+	border-color: var(--vscode-border-light);
 }
 
 .tab-btn.active {
 	background-color: var(--vscode-accent);
-	color: white;
+	border-color: var(--vscode-accent);
+	color: var(--vscode-text-bright);
 }
 
 .tab-pane {
@@ -450,141 +444,132 @@ nav a {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	gap: 2rem;
+	align-items: start;
 }
 
 .steps-wrapper {
-	padding: 1.5rem;
-	background-color: var(--vscode-bg-lighter);
-	border-radius: var(--border-radius-md);
-}
-
-.use-steps {
-	margin-left: 1.5rem;
-}
-
-.use-steps li {
-	margin-bottom: 1rem;
-}
-
-.use-steps li:last-child {
-	margin-bottom: 0;
-}
-
-.use-steps ul {
-	margin: 0.8rem 0 0.8rem 1.5rem;
-}
-
-.ui-screenshot img {
-	border-radius: var(--border-radius-md);
-	box-shadow: var(--shadow-md);
+	padding: 24px;
+	background-color: var(--vscode-bg-card);
+	border-radius: var(--border-radius);
 	border: 1px solid var(--vscode-border);
 }
 
-/* Группы серверов */
-.server-groups {
-	background-color: var(--vscode-bg);
+.use-steps {
+	margin-left: 1.2rem;
+	color: var(--vscode-text-secondary);
 }
 
-.server-groups p {
+.use-steps li {
+	margin-bottom: 12px;
+	line-height: 1.6;
+}
+
+.use-steps ul {
+	margin: 8px 0 8px 1.2rem;
+}
+
+.ui-screenshot img {
+	border-radius: var(--border-radius);
+	border: 1px solid var(--vscode-border);
+	width: 100%;
+}
+
+.server-groups p,
+.security p {
 	text-align: center;
-	max-width: 800px;
+	max-width: 700px;
 	margin: 0 auto 3rem;
-	color: var(--vscode-text-dim);
+	color: var(--vscode-text-secondary);
 }
 
 .groups-grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-	gap: 2rem;
-	margin-bottom: 3rem;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 16px;
 }
 
 .group-feature {
-	background-color: var(--vscode-bg-lighter);
-	padding: 2rem;
-	border-radius: var(--border-radius-md);
-	box-shadow: var(--shadow-sm);
-	transition: transform 0.3s ease, box-shadow 0.3s ease;
+	background-color: var(--vscode-bg-card);
+	padding: 24px;
+	border-radius: var(--border-radius);
+	border: 1px solid var(--vscode-border);
+	transition: border-color var(--transition), transform var(--transition);
 }
 
 .group-feature:hover {
-	transform: translateY(-5px);
-	box-shadow: var(--shadow-md);
+	border-color: var(--vscode-border-light);
+	transform: translateY(-2px);
 }
 
 .group-icon {
-	font-size: 2rem;
-	margin-bottom: 1rem;
+	margin-bottom: 16px;
+	color: var(--vscode-accent-secondary);
+	font-size: 28px;
+	line-height: 1;
 }
 
 .group-feature h3 {
-	font-size: 1.3rem;
-	margin-bottom: 1rem;
+	font-size: 14px;
+	margin-bottom: 8px;
 }
 
 .group-feature p {
-	color: var(--vscode-text-dim);
+	color: var(--vscode-text-secondary);
+	font-size: 13px;
 	text-align: left;
 	margin: 0;
 }
 
-.groups-screenshot {
-	max-width: 700px;
-	margin: 0 auto;
-}
-
-.groups-screenshot img {
-	width: 100%;
-}
-
-/* Безопасность */
-.security p {
-	text-align: center;
-	max-width: 800px;
-	margin: 0 auto 3rem;
-	color: var(--vscode-text-dim);
-}
-
 .security-cards {
-	display: flex;
-	justify-content: center;
-	gap: 2rem;
-	margin-bottom: 3rem;
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 16px;
+	margin-bottom: 2rem;
 }
 
 .security-card {
-	flex-basis: calc(33.333% - 2rem);
-	background-color: var(--vscode-bg-lighter);
-	padding: 2rem;
-	border-radius: var(--border-radius-md);
+	background-color: var(--vscode-bg-card);
+	padding: 32px 24px;
+	border-radius: var(--border-radius);
 	text-align: center;
-	box-shadow: var(--shadow-sm);
+	border: 1px solid var(--vscode-border);
+	transition: border-color var(--transition);
+}
+
+.security-card:hover {
+	border-color: var(--vscode-border-light);
 }
 
 .security-card img {
-	width: 80px;
-	height: 80px;
-	margin-bottom: 1.5rem;
+	width: 48px;
+	height: 48px;
+	margin-bottom: 16px;
+	opacity: 0.9;
 }
 
 .security-card h3 {
-	margin-bottom: 0.5rem;
+	margin-bottom: 4px;
 }
 
 .security-card p {
 	margin-bottom: 0;
+	font-size: 13px;
 }
 
 .security-note {
-	margin-top: 2rem;
 	text-align: center;
-	font-style: italic;
-	color: var(--vscode-text-dim);
+	font-size: 13px;
+	color: var(--vscode-text-secondary);
 }
 
-/* Команды */
+.commands p {
+	text-align: center;
+	color: var(--vscode-text-secondary);
+	margin-bottom: 2rem;
+}
+
 .commands-table {
-	max-width: 900px;
+	max-width: 800px;
 	margin: 0 auto;
 	overflow-x: auto;
 }
@@ -592,143 +577,144 @@ nav a {
 table {
 	width: 100%;
 	border-collapse: collapse;
-	margin-top: 2rem;
+	background-color: var(--vscode-bg-card);
+	border-radius: var(--border-radius);
+	overflow: hidden;
+	border: 1px solid var(--vscode-border);
 }
 
-th,
-td {
-	padding: 1rem;
+th, td {
+	padding: 12px 16px;
 	text-align: left;
 	border-bottom: 1px solid var(--vscode-border);
+	font-size: 13px;
 }
 
 th {
-	background-color: var(--vscode-bg-lighter);
-	color: var(--vscode-text-light);
-	font-weight: 500;
+	background-color: var(--vscode-bg-elevated);
+	color: var(--vscode-text-bright);
+	font-weight: 600;
 }
 
-tr:hover {
-	background-color: var(--vscode-bg-lighter);
+tr:last-child td {
+	border-bottom: none;
 }
 
-/* Стили для секции поддержки */
+tr:hover td {
+	background-color: var(--vscode-bg-elevated);
+}
+
 .support p {
-	max-width: 800px;
+	max-width: 700px;
 	margin: 0 auto 2rem;
 	text-align: center;
-	color: var(--vscode-text-light);
+	color: var(--vscode-text-secondary);
 }
 
 .donation-options {
-	display: flex;
-	justify-content: center;
-	gap: 2rem;
-	margin: 3rem 0;
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 16px;
+	max-width: 600px;
+	margin: 0 auto 2rem;
 }
 
 .donation-card {
-	background-color: var(--vscode-bg-lighter);
+	background-color: var(--vscode-bg-card);
 	border-radius: var(--border-radius);
-	padding: 2rem;
-	flex-basis: 300px;
+	padding: 32px 24px;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	text-align: center;
-	transition: transform 0.3s ease, box-shadow 0.3s ease;
 	border: 1px solid var(--vscode-border);
+	transition: border-color var(--transition);
 }
 
 .donation-card:hover {
-	transform: translateY(-5px);
-	box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+	border-color: var(--vscode-border-light);
 }
 
-.donation-card img {
-	height: 70px;
-	margin-bottom: 1.5rem;
-}
-
-.donation-emoji {
-	font-size: 4rem;
-	margin-bottom: 1.5rem;
+.donation-icon {
+	margin-bottom: 16px;
+	color: var(--vscode-accent-secondary);
+	font-size: 40px;
+	line-height: 1;
 }
 
 .donation-card h3 {
-	color: var(--vscode-text-light);
-	margin-bottom: 1rem;
+	margin-bottom: 8px;
 }
 
 .donation-card p {
-	color: var(--vscode-text-dim);
-	margin-bottom: 1.5rem;
-	font-size: 0.9rem;
+	color: var(--vscode-text-secondary);
+	margin-bottom: 16px;
+	font-size: 13px;
 }
 
 .donate-btn {
-	padding: 0.8rem 1.5rem;
-	background-color: var(--vscode-button-bg);
-	color: var(--vscode-button-fg);
-	border-radius: var(--border-radius-sm);
+	padding: 8px 20px;
+	background-color: var(--vscode-accent);
+	color: var(--vscode-text-bright);
+	border-radius: var(--border-radius);
 	font-weight: 500;
-	transition: background-color 0.2s ease;
-	display: inline-block;
+	font-size: 13px;
+	transition: background-color var(--transition);
 }
 
 .donate-btn:hover {
-	background-color: var(--vscode-button-hover-bg);
-	text-decoration: none;
+	background-color: var(--vscode-accent-hover);
+	color: var(--vscode-text-bright);
 }
 
 .donation-note {
-	margin-top: 2rem !important;
-	font-style: italic;
-	color: var(--vscode-text-dim) !important;
+	text-align: center;
+	font-size: 13px;
+	color: var(--vscode-text-secondary);
 }
 
-/* Подвал */
 footer {
-	background-color: var(--vscode-sidebar-bg);
-	padding: 4rem 0 2rem;
+	background-color: var(--vscode-bg-secondary);
+	padding: 48px 0 24px;
 	border-top: 1px solid var(--vscode-border);
 }
 
 .footer-content {
 	display: flex;
 	justify-content: space-between;
-	margin-bottom: 3rem;
+	margin-bottom: 32px;
 }
 
 .footer-logo {
 	max-width: 200px;
-	text-align: center;
 }
 
 .footer-logo img {
-	width: 64px;
-	height: 64px;
-	margin-bottom: 1rem;
+	width: 40px;
+	height: 40px;
+	margin-bottom: 12px;
 }
 
 .footer-logo h3 {
-	margin-bottom: 0.5rem;
+	margin-bottom: 8px;
+	font-size: 16px;
 }
 
 .footer-logo p {
-	color: var(--vscode-text-dim);
-	font-size: 0.9rem;
+	color: var(--vscode-text-secondary);
+	font-size: 13px;
 }
 
 .footer-links {
 	display: flex;
-	gap: 4rem;
+	gap: 64px;
 }
 
 .footer-column h4 {
-	color: var(--vscode-text-light);
-	margin-bottom: 1.5rem;
-	font-weight: 500;
+	color: var(--vscode-text-bright);
+	margin-bottom: 16px;
+	font-weight: 600;
+	font-size: 13px;
 }
 
 .footer-column ul {
@@ -736,12 +722,13 @@ footer {
 }
 
 .footer-column li {
-	margin-bottom: 0.8rem;
+	margin-bottom: 8px;
 }
 
 .footer-column a {
-	color: var(--vscode-text-dim);
-	transition: color 0.2s ease;
+	color: var(--vscode-text-secondary);
+	font-size: 13px;
+	transition: color var(--transition);
 }
 
 .footer-column a:hover {
@@ -749,34 +736,25 @@ footer {
 }
 
 .footer-bottom {
-	margin-top: 2rem;
-	padding-top: 2rem;
+	padding-top: 24px;
 	border-top: 1px solid var(--vscode-border);
 	text-align: center;
-	color: var(--vscode-text-dim);
+	color: var(--vscode-text-secondary);
+	font-size: 12px;
 }
 
-/* Стили для переключателя языка */
-.lang-switch {
-	font-size: 0.95rem;
-	color: var(--vscode-text-dim);
-	transition: color 0.2s ease;
-	padding: 0.3rem 0.7rem;
-	border-radius: var(--border-radius-sm);
-	background-color: var(--vscode-bg-lighter);
+@media (max-width: 1024px) {
+	.features-grid,
+	.groups-grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
 }
 
-.lang-switch:hover {
-	color: var(--vscode-text-light);
-	text-decoration: none;
-	background-color: var(--vscode-bg-light);
-}
-
-/* Responsive */
 @media (max-width: 992px) {
 	.hero-content {
 		grid-template-columns: 1fr;
 		text-align: center;
+		gap: 40px;
 	}
 
 	.hero-text {
@@ -792,41 +770,40 @@ footer {
 	}
 
 	.security-cards {
-		flex-wrap: wrap;
-	}
-
-	.security-card {
-		flex-basis: calc(50% - 1rem);
-	}
-
-	.donation-options {
-		flex-wrap: wrap;
-	}
-
-	.donation-card {
-		flex-basis: calc(50% - 1rem);
+		grid-template-columns: 1fr;
+		max-width: 400px;
+		margin-left: auto;
+		margin-right: auto;
 	}
 
 	.footer-content {
 		flex-direction: column;
-		gap: 3rem;
-		align-items: center;
+		gap: 32px;
 		text-align: center;
 	}
 
+	.footer-logo {
+		max-width: 100%;
+	}
+
 	.footer-links {
-		flex-direction: column;
-		gap: 2rem;
+		justify-content: center;
+		gap: 48px;
 	}
 }
 
 @media (max-width: 768px) {
-	.step {
-		flex-basis: calc(50% - 20px);
-		margin-bottom: 2rem;
+	.features-grid,
+	.groups-grid {
+		grid-template-columns: 1fr;
 	}
 
-	.step:nth-child(2)::after {
+	.installation-steps {
+		flex-direction: column;
+		gap: 24px;
+	}
+
+	.step:not(:last-child)::after {
 		display: none;
 	}
 
@@ -834,39 +811,43 @@ footer {
 		grid-template-columns: 1fr;
 	}
 
-	.security-card {
-		flex-basis: 100%;
-	}
-
-	.donation-card {
-		flex-basis: 100%;
+	.donation-options {
+		grid-template-columns: 1fr;
 	}
 
 	.header-content {
 		flex-direction: column;
-		gap: 1rem;
+		height: auto;
+		padding: 12px 0;
+		gap: 12px;
 	}
 
 	nav ul {
 		flex-wrap: wrap;
 		justify-content: center;
+		gap: 4px;
+	}
+
+	nav a {
+		padding: 8px 10px;
+	}
+
+	.footer-links {
+		flex-direction: column;
+		gap: 24px;
 	}
 }
 
 @media (max-width: 576px) {
-	.step {
-		flex-basis: 100%;
-	}
-
-	.step::after {
-		display: none;
-	}
-
 	h2 {
-		font-size: 1.8rem;
+		font-size: 1.5rem;
 	}
 
 	.hero-text h2 {
-		font-size: 2.2rem;
+		font-size: 1.8rem;
+	}
+
+	section {
+		padding: 60px 0;
 	}
 }

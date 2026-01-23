@@ -5,10 +5,8 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Save Serve – управление SSH-серверами прямо из VS Code</title>
+	<link rel="stylesheet" href="https://unpkg.com/@vscode/codicons/dist/codicon.css">
 	<link rel="stylesheet" href="styles.css">
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 	<link rel="icon" type="image/png" href="img/favicon.png">
 </head>
 
@@ -16,7 +14,7 @@
 	<header>
 		<div class="container header-content">
 			<div class="logo">
-				<img src="img/icon.png" alt="Save Serve Logo" id="logo-image">
+				<img src="img/icon.png" alt="Save Serve Logo">
 				<h1>Save Serve</h1>
 			</div>
 			<nav>
@@ -26,8 +24,8 @@
 					<li><a href="#how-to-use">Использование</a></li>
 					<li><a href="#server-groups">Группы</a></li>
 					<li><a href="#security">Безопасность</a></li>
-					<li><a href="#support">Задонатить</a></li>
-					<li><a href="index-en.html" class="lang-switch">ENG</a></li>
+					<li><a href="#support">Поддержать</a></li>
+					<li><a href="index-en.html" class="lang-switch">EN</a></li>
 					<li><a href="https://marketplace.visualstudio.com/items?itemName=nkarasyov.save-serve"
 							target="_blank" class="install-btn">Установить</a></li>
 				</ul>
@@ -47,8 +45,14 @@
 						<span class="badge">Лицензия MIT</span>
 					</div>
 					<a href="https://marketplace.visualstudio.com/items?itemName=nkarasyov.save-serve" target="_blank"
-						class="cta-btn">Установить</a>
-					<a href="https://github.com/kianurivzzz/save-serve" target="_blank" class="github-btn">GitHub</a>
+						class="cta-btn">
+						<i class="codicon codicon-cloud-download"></i>
+						Установить
+					</a>
+					<a href="https://github.com/kianurivzzz/save-serve" target="_blank" class="github-btn">
+						<i class="codicon codicon-github"></i>
+						GitHub
+					</a>
 				</div>
 				<div class="hero-image">
 					<video controls autoplay loop muted class="demo-video">
@@ -65,57 +69,57 @@
 			<h2>Возможности</h2>
 			<div class="features-grid">
 				<div class="feature-card">
-					<div class="feature-icon">🔒</div>
+					<div class="feature-icon"><i class="codicon codicon-shield"></i></div>
 					<h3>Безопасность</h3>
 					<p>Данные серверов хранятся в зашифрованном виде в системном хранилище</p>
 				</div>
 				<div class="feature-card">
-					<div class="feature-icon">🔑</div>
+					<div class="feature-icon"><i class="codicon codicon-key"></i></div>
 					<h3>Разные способы входа</h3>
 					<p>Работает с паролями и SSH-ключами с защитой паролем</p>
 				</div>
 				<div class="feature-card">
-					<div class="feature-icon">🖱️</div>
+					<div class="feature-icon"><i class="codicon codicon-play"></i></div>
 					<h3>Подключение в один клик</h3>
 					<p>Доступ к серверам в один клик</p>
 				</div>
 				<div class="feature-card">
-					<div class="feature-icon">🧠</div>
+					<div class="feature-icon"><i class="codicon codicon-window"></i></div>
 					<h3>Простой интерфейс</h3>
 					<p>Удобные формы для управления серверами на русском и английском языках</p>
 				</div>
 				<div class="feature-card">
-					<div class="feature-icon">📁</div>
+					<div class="feature-icon"><i class="codicon codicon-folder-library"></i></div>
 					<h3>Группы серверов</h3>
 					<p>Организуй серверы в удобные группы</p>
 				</div>
 				<div class="feature-card">
-					<div class="feature-icon">💾</div>
+					<div class="feature-icon"><i class="codicon codicon-save"></i></div>
 					<h3>Сохранение состояния</h3>
 					<p>Никакой потери данных при переключении окон</p>
 				</div>
 				<div class="feature-card">
-					<div class="feature-icon">✅</div>
+					<div class="feature-icon"><i class="codicon codicon-check"></i></div>
 					<h3>Валидация форм</h3>
 					<p>Показывает ошибки в реальном времени</p>
 				</div>
 				<div class="feature-card">
-					<div class="feature-icon">🎨</div>
+					<div class="feature-icon"><i class="codicon codicon-symbol-color"></i></div>
 					<h3>Кастомные иконки</h3>
 					<p>Выбирай из множества иконок для серверов и групп</p>
 				</div>
 				<div class="feature-card">
-					<div class="feature-icon">🌈</div>
+					<div class="feature-icon"><i class="codicon codicon-paintcan"></i></div>
 					<h3>Цветовое кодирование</h3>
 					<p>Отмечай серверы цветами</p>
 				</div>
 				<div class="feature-card">
-					<div class="feature-icon">⚡</div>
+					<div class="feature-icon"><i class="codicon codicon-keyboard"></i></div>
 					<h3>Горячие клавиши</h3>
 					<p>Используй сочетания клавиш для быстрых действий</p>
 				</div>
 				<div class="feature-card">
-					<div class="feature-icon">🔍</div>
+					<div class="feature-icon"><i class="codicon codicon-search"></i></div>
 					<h3>Быстрый поиск</h3>
 					<p>Ищи и подключайся к серверам быстро</p>
 				</div>
@@ -182,8 +186,8 @@
 										<li><strong>Имя пользователя</strong> – логин для подключения</li>
 										<li><strong>Способ аутентификации</strong>:
 											<ul>
-												<li>🔑 <strong>По паролю</strong> – введи и сохрани пароль</li>
-												<li>🔐 <strong>По SSH-ключу</strong> – выбери файл ключа и пароль от
+												<li><strong>По паролю</strong> – введи и сохрани пароль</li>
+												<li><strong>По SSH-ключу</strong> – выбери файл ключа и пароль от
 													ключа, если есть</li>
 											</ul>
 										</li>
@@ -221,22 +225,22 @@
 
 			<div class="groups-grid">
 				<div class="group-feature">
-					<div class="group-icon">📁</div>
+					<div class="group-icon"><i class="codicon codicon-new-folder"></i></div>
 					<h3>Создание групп</h3>
 					<p>Создавай группы, нажав на кнопку "Добавить группу" в панели инструментов</p>
 				</div>
 				<div class="group-feature">
-					<div class="group-icon">🗂️</div>
+					<div class="group-icon"><i class="codicon codicon-list-tree"></i></div>
 					<h3>Организация серверов</h3>
 					<p>Распределяй серверы по группам при создании или редактировании</p>
 				</div>
 				<div class="group-feature">
-					<div class="group-icon">➕</div>
+					<div class="group-icon"><i class="codicon codicon-add"></i></div>
 					<h3>Быстрое добавление</h3>
 					<p>Добавляй сервер непосредственно в группу, нажав правой кнопкой мыши на группу</p>
 				</div>
 				<div class="group-feature">
-					<div class="group-icon">⚙️</div>
+					<div class="group-icon"><i class="codicon codicon-settings-gear"></i></div>
 					<h3>Управление группами</h3>
 					<p>Редактируй или удаляй группы через контекстное меню</p>
 				</div>
@@ -340,19 +344,19 @@
 
 	<section id="support" class="support">
 		<div class="container">
-			<h2>Задонатить</h2>
+			<h2>Поддержать проект</h2>
 			<p>Save Serve — это бесплатное расширение с открытым исходным кодом. Если оно оказалось полезным для тебя,
 				то можешь поддержать его разработку:</p>
 
 			<div class="donation-options">
 				<div class="donation-card">
-					<div class="donation-emoji">☕</div>
+					<div class="donation-icon"><i class="codicon codicon-heart"></i></div>
 					<h3>Buy Me a Coffee</h3>
 					<p>Купи мне кофе</p>
 					<a href="https://www.buymeacoffee.com/nkarasyov" target="_blank" class="donate-btn">Поддержать</a>
 				</div>
 				<div class="donation-card">
-					<div class="donation-emoji">💰</div>
+					<div class="donation-icon"><i class="codicon codicon-globe"></i></div>
 					<h3>CloudTips</h3>
 					<p>Российский сервис для донатов</p>
 					<a href="https://pay.cloudtips.ru/p/920f6d9e" target="_blank" class="donate-btn">Поддержать</a>
@@ -369,7 +373,7 @@
 				<div class="footer-logo">
 					<img src="img/icon.png" alt="Save Serve Logo">
 					<h3>Save Serve</h3>
-					<p>Сделано с ❤️ для разработчиков</p>
+					<p>Сделано для разработчиков</p>
 				</div>
 				<div class="footer-links">
 					<div class="footer-column">
@@ -380,7 +384,7 @@
 							<li><a href="#how-to-use">Использование</a></li>
 							<li><a href="#server-groups">Группы</a></li>
 							<li><a href="#security">Безопасность</a></li>
-							<li><a href="#support">Задонатить</a></li>
+							<li><a href="#support">Поддержать</a></li>
 						</ul>
 					</div>
 					<div class="footer-column">
@@ -388,6 +392,8 @@
 						<ul>
 							<li><a href="https://marketplace.visualstudio.com/items?itemName=nkarasyov.save-serve"
 									target="_blank">VS Code Marketplace</a></li>
+							<li><a href="https://open-vsx.org/extension/nkarasyov/save-serve"
+									target="_blank">Open VSX Registry</a></li>
 							<li><a href="https://github.com/kianurivzzz/save-serve" target="_blank">GitHub</a></li>
 							<li><a href="https://github.com/kianurivzzz/save-serve/issues" target="_blank">Сообщить об
 									ошибке</a></li>
