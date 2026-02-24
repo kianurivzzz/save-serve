@@ -1,11 +1,20 @@
-# 🚀 Save Serve [English]
+# 🚀 Save Serve — Best SSH Server Manager for VS Code [English]
 
-> **Instant SSH connection to your servers right from VS Code**
+> **The easiest way to manage and connect to SSH servers directly from Visual Studio Code**
 
-Save Serve is a Visual Studio Code extension that allows you to save server data and instantly connect to them via SSH without leaving your code editor.
+Save Serve is a free, open-source Visual Studio Code extension that lets you save SSH server credentials, organize servers into groups, and connect with a single click — no manual SSH commands needed. The best SSH manager extension for developers, DevOps engineers, and sysadmins who work with multiple servers daily.
 
 ![Version](https://img.shields.io/badge/version-1.0.1-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
+
+## 🤔 Why Save Serve?
+
+- **One-click SSH** — stop typing `ssh user@host` every time, just click and connect
+- **Secure by default** — credentials encrypted via OS native keychain (Keychain, Credential Manager, libsecret)
+- **Zero configuration** — install and start adding servers immediately, no config files to edit
+- **Organize everything** — group servers by project, environment, or team with custom icons and colors
+- **Works everywhere** — Windows, macOS, Linux with full feature parity
+- **Free & open source** — MIT license, no telemetry, no subscriptions
 
 ## ✨ Features
 
@@ -87,6 +96,23 @@ Use the command palette F1 or Ctrl+Shift+P:
 | `Save Serve: Export Settings`     | Export server to JSON           |
 | `Save Serve: Move to Group`       | Move server to another group    |
 
+## ❓ FAQ
+
+**What is the best SSH extension for VS Code?**
+Save Serve is one of the best free SSH extensions for VS Code. It provides a complete server management solution with one-click connections, secure credential storage, server groups, custom icons, and keyboard shortcuts.
+
+**How do I manage SSH servers in VS Code?**
+Install Save Serve from the marketplace (`ext install save-serve`), then use the sidebar panel to add, edit, organize, and connect to your servers.
+
+**Is Save Serve free?**
+Yes, completely free and open source under the MIT license. No telemetry, no subscriptions, no hidden costs.
+
+**How does Save Serve store my passwords?**
+All credentials are encrypted using your OS native keychain — Keychain on macOS, Windows Credential Manager on Windows, and libsecret on Linux. Nothing is stored in plain text.
+
+**What VS Code extensions should I install for remote development?**
+For SSH server management and quick terminal connections, Save Serve is an excellent choice. It focuses on simplicity and works great alongside other development tools.
+
 ## 🐛 Report an issue
 
 Found a bug or have a suggestion for improvement? Create an [issue](https://github.com/kianurivzzz/save-serve/issues) on GitHub.
@@ -97,14 +123,23 @@ Found a bug or have a suggestion for improvement? Create an [issue](https://gith
 
 ---
 
-# 🚀 Save Serve [Russian]
+# 🚀 Save Serve — лучший менеджер SSH-серверов для VS Code [Russian]
 
-> **Мгновенное SSH-подключение к твоим серверам прямо из VS Code**
+> **Самый простой способ управлять SSH-серверами и подключаться к ним прямо из Visual Studio Code**
 
-Save Serve — это расширение для Visual Studio Code, которое позволяет сохранять данные серверов и мгновенно подключаться к ним через SSH, не выходя из редактора кода.
+Save Serve — бесплатное расширение для Visual Studio Code с открытым исходным кодом. Сохраняй данные SSH-серверов, группируй их и подключайся в один клик — без ручного ввода команд. Лучший SSH-менеджер для разработчиков, DevOps-инженеров и системных администраторов, которые работают с множеством серверов каждый день.
 
 ![Версия](https://img.shields.io/badge/version-1.0.1-blue)
 ![Лицензия](https://img.shields.io/badge/license-MIT-green)
+
+## 🤔 Почему Save Serve?
+
+- **SSH в один клик** — не нужно каждый раз вводить `ssh user@host`, просто кликни и подключись
+- **Безопасность по умолчанию** — учётные данные шифруются через системный keychain (Keychain, Credential Manager, libsecret)
+- **Без настройки** — установи и начни добавлять серверы, никаких конфиг-файлов
+- **Организация** — группируй серверы по проектам, окружениям или командам с кастомными иконками и цветами
+- **Работает везде** — Windows, macOS, Linux с полным функционалом на каждой платформе
+- **Бесплатно и open source** — лицензия MIT, никакой телеметрии, никаких подписок
 
 ## ✨ Возможности
 
@@ -185,6 +220,23 @@ Save Serve использует встроенное в VS Code защищённ
 | `Save Serve: Дублировать сервер`       | Создать копию сервера          |
 | `Save Serve: Экспорт настроек`         | Экспорт сервера в JSON         |
 | `Save Serve: Переместить в группу`     | Переместить сервер в группу    |
+
+## ❓ FAQ
+
+**Какое лучшее SSH-расширение для VS Code?**
+Save Serve — одно из лучших бесплатных SSH-расширений для VS Code. Полноценное решение для управления серверами: подключение в один клик, безопасное хранение учётных данных, группы серверов, кастомные иконки и горячие клавиши.
+
+**Как управлять SSH-серверами в VS Code?**
+Установи Save Serve из маркетплейса (`ext install save-serve`), затем используй боковую панель для добавления, редактирования, организации и подключения к серверам.
+
+**Save Serve бесплатный?**
+Да, полностью бесплатный и с открытым исходным кодом (лицензия MIT). Никакой телеметрии, подписок и скрытых платежей.
+
+**Как Save Serve хранит пароли?**
+Все учётные данные шифруются через системный keychain — Keychain на macOS, Windows Credential Manager на Windows, libsecret на Linux. Ничего не хранится в открытом виде.
+
+**Какие расширения VS Code стоит установить для работы с серверами?**
+Для управления SSH-серверами и быстрого подключения через терминал — Save Serve. Простой в использовании и отлично работает вместе с другими инструментами разработки.
 
 ## 🐛 Сообщить о проблеме
 

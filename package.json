@@ -1,7 +1,7 @@
 {
   "name": "save-serve",
   "displayName": "Save Serve",
-  "description": "Save accesses to your servers in a couple mouse clicks, then quickly connect to them. Right in your favorite code editor. Easy and secure. Use Save Serve for free!",
+  "description": "Best free SSH server manager for VS Code. Save, organize, and instantly connect to SSH servers with one click. Supports password and SSH key authentication, server groups, custom icons, color coding, and secure credential storage. The easiest way to manage SSH connections in Visual Studio Code.",
   "version": "1.0.1",
   "publisher": "nkarasyov",
   "engines": {
@@ -17,10 +17,20 @@
   "license": "MIT",
   "keywords": [
     "ssh",
+    "ssh manager",
+    "ssh client",
     "server",
+    "server manager",
     "terminal",
     "remote",
-    "connection"
+    "remote connection",
+    "ssh connection",
+    "ssh key",
+    "ssh terminal",
+    "server groups",
+    "devops",
+    "sysadmin",
+    "deploy"
   ],
   "icon": "images/icon.png",
   "activationEvents": [],
