@@ -673,6 +673,63 @@ tr:hover td {
 	color: var(--vscode-text-secondary);
 }
 
+.faq {
+	text-align: center;
+}
+
+.faq-list {
+	max-width: 800px;
+	margin: 3rem auto 0;
+	text-align: left;
+}
+
+.faq-item {
+	background-color: var(--vscode-bg-card);
+	border: 1px solid var(--vscode-border);
+	border-radius: var(--border-radius);
+	margin-bottom: 8px;
+	transition: border-color var(--transition);
+}
+
+.faq-item:hover {
+	border-color: var(--vscode-border-light);
+}
+
+.faq-item summary {
+	padding: 16px 20px;
+	cursor: pointer;
+	font-weight: 600;
+	font-size: 14px;
+	color: var(--vscode-text-bright);
+	list-style: none;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.faq-item summary::-webkit-details-marker {
+	display: none;
+}
+
+.faq-item summary::after {
+	content: "+";
+	font-size: 18px;
+	color: var(--vscode-accent-secondary);
+	flex-shrink: 0;
+	margin-left: 16px;
+}
+
+.faq-item[open] summary::after {
+	content: "−";
+}
+
+.faq-item p {
+	padding: 0 20px 16px;
+	color: var(--vscode-text-secondary);
+	font-size: 13px;
+	line-height: 1.7;
+}
+
 footer {
 	background-color: var(--vscode-bg-secondary);
 	padding: 48px 0 24px;
